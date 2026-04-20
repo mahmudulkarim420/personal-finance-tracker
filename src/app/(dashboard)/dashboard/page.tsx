@@ -16,6 +16,16 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
+  // Guard: if this user is an admin in the DB, send them to the admin panel.
+  // We use the DB as source of truth — Clerk session claims can be stale.
+  const dbUser = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { role: true },
+  });
+  if (dbUser?.role === "admin") {
+    redirect("/admin/overview");
+  }
+
   // Fetch all user transactions
   const transactions = await db.transaction.findMany({
     where: { clerkId: userId },

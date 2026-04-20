@@ -10,32 +10,50 @@ const isPublicRoute = createRouteMatcher([
 
 const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 
+const isUserRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/transactions(.*)',
+  '/budgets(.*)',
+  '/goals(.*)',
+  '/settings(.*)',
+]);
+
 export default clerkMiddleware(async (auth, request) => {
   const authObj = await auth();
-  const role = authObj.sessionClaims?.metadata?.role;
 
-  // Protect Admin Routes
+  // ── Step 1: Let unauthenticated users through to public routes ──────────────
+  if (isPublicRoute(request)) return NextResponse.next();
+
+  // ── Step 2: Redirect unauthenticated users to sign-in ──────────────────────
+  if (!authObj.userId) {
+    return authObj.redirectToSignIn();
+  }
+
+  // ── Step 3: Role-based routing ──────────────────────────────────────────────
+  // NOTE: sessionClaims.metadata.role is used here for SPEED at the edge layer
+  // (Middleware runs before any DB call is possible). This is acceptable because:
+  //   a) Admin promotion is an infrequent operation.
+  //   b) Each individual page & server action performs a secondary DB-based
+  //      role check as the definitive "source of truth" guard.
+  // If a role change doesn't reflect immediately, the user must sign out and
+  // sign back in to refresh their Clerk session token.
+  const role = authObj.sessionClaims?.metadata?.role as string | undefined;
+
+  // Protect Admin Routes — block non-admins
   if (isAdminRoute(request)) {
     if (role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }
 
-  // Protect User Routes (Strict separation)
-  const isUserRoute = createRouteMatcher([
-    '/dashboard(.*)',
-    '/transactions(.*)',
-    '/budgets(.*)',
-    '/goals(.*)',
-  ]);
-
+  // Protect User Routes — redirect admins away from standard pages
   if (isUserRoute(request)) {
     if (role === 'admin') {
       return NextResponse.redirect(new URL('/admin/overview', request.url));
     }
   }
 
-  // Handle Root Redirect
+  // ── Step 4: Root redirect ───────────────────────────────────────────────────
   if (request.nextUrl.pathname === '/') {
     if (role === 'admin') {
       return NextResponse.redirect(new URL('/admin/overview', request.url));
@@ -43,11 +61,7 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if (!isPublicRoute(request)) {
-    if (!authObj.userId) {
-      return authObj.redirectToSignIn();
-    }
-  }
+  return NextResponse.next();
 });
 
 export const config = {

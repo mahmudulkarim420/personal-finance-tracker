@@ -64,7 +64,9 @@ export default function Header() {
           aria-label="Open command search (Ctrl+K)"
         >
           <Search className="w-3.5 h-3.5 text-neutral-500 shrink-0" strokeWidth={2} />
-          <span className="text-[13px] text-neutral-600 flex-1">Search transactions, pages…</span>
+          <span className="text-[13px] text-neutral-600 flex-1">
+            {role === 'admin' ? 'Search admin pages…' : 'Search transactions, pages…'}
+          </span>
           <kbd className="text-[10px] text-neutral-600 bg-[#222] border border-[#333] rounded px-1.5 py-0.5 font-mono shrink-0">
             ⌘K
           </kbd>
@@ -146,7 +148,7 @@ export default function Header() {
       </motion.header>
 
       {/* Command Search — rendered outside header to avoid z-index clipping */}
-      <CommandSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <CommandSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} role={role ?? undefined} />
     </>
   )
 }

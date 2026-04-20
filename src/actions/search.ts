@@ -13,7 +13,8 @@ export type SearchResult = {
   txType?: string;
 };
 
-const PAGES: SearchResult[] = [
+// Pages available only to regular users
+const USER_PAGES: SearchResult[] = [
   { id: "page-dashboard", type: "page", label: "Dashboard", href: "/dashboard" },
   { id: "page-transactions", type: "page", label: "Transactions", href: "/transactions" },
   { id: "page-budgets", type: "page", label: "Budgets", href: "/budgets" },
@@ -21,8 +22,15 @@ const PAGES: SearchResult[] = [
   { id: "page-settings", type: "page", label: "Settings", href: "/settings" },
 ];
 
+// Pages available only to admins (standard user pages are intentionally excluded)
+const ADMIN_PAGES: SearchResult[] = [
+  { id: "page-admin-overview", type: "page", label: "Admin Dashboard", href: "/admin/overview" },
+  { id: "page-admin-users", type: "page", label: "User Management", href: "/admin/users" },
+];
+
 /**
- * Search transactions by description or category, and also return matching pages.
+ * Search transactions (user) or return admin nav links (admin).
+ * Role is always read from the Prisma database — never from Clerk session claims.
  */
 export async function searchAll(query: string): Promise<{
   success: boolean;
@@ -33,16 +41,30 @@ export async function searchAll(query: string): Promise<{
     const { userId } = await auth();
     if (!userId) return { success: false, error: "Unauthorized" };
 
+    // Source of truth: read role from DB
+    const dbUser = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { role: true },
+    });
+
+    const isAdmin = dbUser?.role === "admin";
+    const PAGES = isAdmin ? ADMIN_PAGES : USER_PAGES;
+
     const q = query.trim().toLowerCase();
 
-    // Filter pages client-side (they're static)
-    const matchedPages = PAGES.filter((p) => p.label.toLowerCase().includes(q));
-
+    // Empty query → return all role-appropriate pages
     if (!q) {
       return { success: true, data: PAGES };
     }
 
-    // Search transactions from DB
+    const matchedPages = PAGES.filter((p) => p.label.toLowerCase().includes(q));
+
+    // Admins don't have personal transactions — return only page matches
+    if (isAdmin) {
+      return { success: true, data: matchedPages };
+    }
+
+    // For regular users: also search their transactions
     const transactions = await db.transaction.findMany({
       where: {
         clerkId: userId,

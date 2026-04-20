@@ -15,6 +15,8 @@ import {
   Loader2,
   Hash,
   Command,
+  Shield,
+  Users,
 } from "lucide-react";
 import { searchAll, type SearchResult } from "@/actions/search";
 
@@ -24,6 +26,9 @@ const PAGE_ICONS: Record<string, React.ElementType> = {
   Budgets: PieChart,
   Goals: Target,
   Settings: Settings,
+  // Admin pages
+  "Admin Dashboard": Shield,
+  "User Management": Users,
 };
 
 function formatAmount(amount: number, type?: string) {
@@ -34,9 +39,11 @@ function formatAmount(amount: number, type?: string) {
 interface CommandSearchProps {
   isOpen: boolean;
   onClose: () => void;
+  role?: string;
 }
 
-export default function CommandSearch({ isOpen, onClose }: CommandSearchProps) {
+export default function CommandSearch({ isOpen, onClose, role }: CommandSearchProps) {
+  const isAdmin = role === "admin";
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -147,7 +154,11 @@ export default function CommandSearch({ isOpen, onClose }: CommandSearchProps) {
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search transactions, pages…"
+                placeholder={
+                  isAdmin
+                    ? "Search admin pages…"
+                    : "Search transactions, pages…"
+                }
                 className="flex-1 bg-transparent text-[14px] text-white placeholder:text-neutral-600 outline-none"
               />
               <kbd className="hidden text-[10px] text-neutral-600 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 font-mono sm:block">
