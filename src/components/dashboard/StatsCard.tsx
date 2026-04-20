@@ -34,7 +34,7 @@ export function StatsCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
       className={clsx(
-        "flex min-h-[210px] flex-col rounded-[28px] border border-white/10 bg-[#121212]/85 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl",
+        "flex min-h-[210px] min-w-0 flex-col rounded-[28px] border border-white/10 bg-[#121212]/85 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl",
         className
       )}
     >
@@ -71,7 +71,7 @@ export function StatsCard({
       </div>
 
       {chartData ? (
-        <div className="mt-auto h-10 pt-5">
+        <div className="mt-auto h-10 min-w-0 min-h-10 pt-5">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} barSize={6} barCategoryGap={4}>
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>

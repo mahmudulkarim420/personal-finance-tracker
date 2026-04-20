@@ -67,7 +67,7 @@ export function CashFlowChart() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.5, ease: "easeOut" }}
-      className="rounded-[28px] border border-white/10 bg-[#121212]/85 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl"
+      className="min-w-0 rounded-[28px] border border-white/10 bg-[#121212]/85 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl"
     >
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -96,7 +96,7 @@ export function CashFlowChart() {
         </div>
       </div>
 
-      <div className="h-[260px] sm:h-[320px]">
+      <div className="h-[260px] min-w-0 min-h-[260px] sm:h-[320px] sm:min-h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
             <defs>

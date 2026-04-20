@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion'
 import { Search, Bell, HelpCircle } from 'lucide-react'
 import { useUser, UserButton } from '@clerk/nextjs'
+import { useRole } from "@/hooks/use-role";
 
 export default function Header() {
   const { isLoaded, user } = useUser()
+  const { role, isLoaded: isRoleLoaded } = useRole()
   return (
     <motion.header
       initial={{ y: -10, opacity: 0 }}
@@ -47,8 +49,8 @@ export default function Header() {
               <span className="text-[13px] font-semibold text-white/90">
                 {user?.fullName || user?.username || 'Guest'}
               </span>
-              <span className="text-[10px] text-neutral-500 font-medium mt-1">
-                Workspace Owner
+              <span className="text-[10px] text-neutral-500 font-medium mt-1 uppercase tracking-tighter">
+                {isRoleLoaded ? (role === 'admin' ? 'System Administrator' : 'Standard User') : '...'}
               </span>
             </div>
             <div className="relative group">

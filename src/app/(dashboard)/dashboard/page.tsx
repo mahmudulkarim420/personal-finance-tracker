@@ -1,7 +1,6 @@
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
 import { RecentFlow } from "@/components/dashboard/RecentFlow";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { Sidebar } from "@/components/navigation/Sidebar";
 import { Landmark, TrendingDown, TrendingUp } from "lucide-react";
 
 const incomeData = [
@@ -39,8 +38,8 @@ export default function DashboardPage() {
       </div>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.75fr)_minmax(320px,1fr)]">
-        <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+        <div className="min-w-0 space-y-4">
+          <div className="grid min-w-0 gap-4 md:grid-cols-2 2xl:grid-cols-3">
             <StatsCard
               title="Total Balance"
               amount="$1,248,903.45"
@@ -78,7 +77,7 @@ export default function DashboardPage() {
           <CashFlowChart />
         </div>
 
-        <div className="min-h-[420px]">
+        <div className="min-h-[420px] min-w-0">
           <RecentFlow />
         </div>
       </section>
