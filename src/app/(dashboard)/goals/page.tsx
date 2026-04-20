@@ -1,20 +1,24 @@
-export default function GoalsPage() {
+import Goals from "@/components/goals/Goals";
+import { checkUser } from "@/actions/checkUser";
+import { auth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
+
+export default async function GoalsPage() {
+  await checkUser();
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  const goals = await db.goal.findMany({
+    where: { clerkId: userId },
+    orderBy: { createdAt: "desc" },
+  });
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-          Financial Goals
-        </h1>
-        <p className="mt-2 text-sm text-neutral-400">
-          Track your progress towards long-term wealth targets.
-        </p>
-      </div>
-
-      <div className="grid gap-6">
-        <div className="rounded-3xl border border-white/5 bg-white/5 p-8 text-center">
-          <p className="text-neutral-500">Goal tracking coming soon...</p>
-        </div>
-      </div>
+      <Goals initialGoals={goals} />
     </div>
   );
 }
