@@ -1,27 +1,138 @@
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
-import { RecentFlow } from "@/components/dashboard/RecentFlow";
+import { RecentFlow, FlowTransaction } from "@/components/dashboard/RecentFlow";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Landmark, TrendingDown, TrendingUp } from "lucide-react";
+import { checkUser } from "@/actions/checkUser";
+import { auth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
 
-const incomeData = [
-  { value: 28000 },
-  { value: 32000 },
-  { value: 30000 },
-  { value: 35000 },
-  { value: 38000 },
-  { value: 42500 },
-];
+export default async function DashboardPage() {
+  // Sync user with database
+  await checkUser();
 
-const expenseData = [
-  { value: 20000 },
-  { value: 17500 },
-  { value: 19000 },
-  { value: 21000 },
-  { value: 18500 },
-  { value: 18240 },
-];
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
-export default function DashboardPage() {
+  // Fetch all user transactions
+  const transactions = await db.transaction.findMany({
+    where: { clerkId: userId },
+    orderBy: { date: "desc" },
+  });
+
+  // Date utilities
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+  // Aggregate stats
+  let totalBalance = 0;
+  let currentMonthIncome = 0;
+  let currentMonthExpense = 0;
+  let lastMonthIncome = 0;
+  let lastMonthExpense = 0;
+  
+  // To find top category
+  const expenseCategories: Record<string, number> = {};
+
+  transactions.forEach((t) => {
+    totalBalance += t.amount;
+    
+    const d = new Date(t.date);
+    const m = d.getMonth();
+    const y = d.getFullYear();
+
+    if (m === currentMonth && y === currentYear) {
+      if (t.amount > 0) {
+        currentMonthIncome += t.amount;
+      } else {
+        currentMonthExpense += Math.abs(t.amount);
+        expenseCategories[t.category] = (expenseCategories[t.category] || 0) + Math.abs(t.amount);
+      }
+    } else if (m === lastMonth && y === lastMonthYear) {
+      if (t.amount > 0) {
+        lastMonthIncome += t.amount;
+      } else {
+        lastMonthExpense += Math.abs(t.amount);
+      }
+    }
+  });
+
+  // Calculate trends
+  const calculateTrend = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return ((current - previous) / previous) * 100;
+  };
+
+  const incomeTrendValue = calculateTrend(currentMonthIncome, lastMonthIncome);
+  const expenseTrendValue = calculateTrend(currentMonthExpense, lastMonthExpense);
+  
+  // Dummy total balance trend since total balance doesn't compare month vs month directly in typical setups unless we calculate total balance at end of last month
+  // We'll calculate a simple net flow trend for the total balance
+  const currentNetFlow = currentMonthIncome - currentMonthExpense;
+  const lastNetFlow = lastMonthIncome - lastMonthExpense;
+  const netFlowTrend = calculateTrend(currentNetFlow, lastNetFlow);
+
+  const formatCurrency = (val: number) =>
+    `$${Math.abs(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const formatTrend = (val: number) => 
+    `${val > 0 ? '+' : (val < 0 ? '' : '')}${val.toFixed(1)}% vs last month`;
+
+  // Top category logic
+  let topCategory = "None";
+  let maxExpense = 0;
+  for (const [cat, amt] of Object.entries(expenseCategories)) {
+    if (amt > maxExpense) {
+      maxExpense = amt;
+      topCategory = cat;
+    }
+  }
+
+  // Chart data: Group transactions by month for the last 6 months
+  const chartDataMap: Record<string, number> = {};
+  
+  // Initialize last 6 months
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const chartData: { month: string; amount: number }[] = [];
+  
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const mx = monthNames[d.getMonth()];
+    chartData.push({ month: mx, amount: 0 });
+    chartDataMap[`${d.getFullYear()}-${d.getMonth()}`] = chartData.length - 1;
+  }
+
+  // We can choose to show Net Flow or Income for the Chart. 
+  // Let's show Income - Expense (Net Flow) or just cumulative balance. User asked to "feed into chart". Let's show Net Flow per month.
+  transactions.forEach((t) => {
+    const d = new Date(t.date);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    if (chartDataMap[key] !== undefined) {
+      chartData[chartDataMap[key]].amount += t.amount; // net flow
+    }
+  });
+
+  // Recent 4 flows
+  const recentFlows: FlowTransaction[] = transactions.slice(0, 4).map(t => ({
+    id: t.id,
+    name: t.description || 'Transaction',
+    category: t.category,
+    amount: t.amount,
+    status: t.status,
+  }));
+
+  // Dummy mini-chart data for StatsCards (since these usually take small arrays of 6 values)
+  // We can just use the chartData values for income/expense
+  const miniIncomeData = chartData.map(d => ({ value: Math.abs(d.amount) })); // Simplified
+  const miniExpenseData = chartData.map(d => ({ value: Math.abs(d.amount) }));
+
   return (
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -42,43 +153,43 @@ export default function DashboardPage() {
           <div className="grid min-w-0 gap-4 md:grid-cols-2 2xl:grid-cols-3">
             <StatsCard
               title="Total Balance"
-              amount="$1,248,903.45"
-              trend="+2.4% this month"
-              trendTone="positive"
+              amount={(totalBalance < 0 ? "-" : "") + formatCurrency(totalBalance)}
+              trend={formatTrend(netFlowTrend)}
+              trendTone={netFlowTrend > 0 ? "positive" : netFlowTrend < 0 ? "negative" : "neutral"}
               icon={<Landmark className="h-5 w-5" strokeWidth={1.5} />}
               className="md:col-span-2 2xl:col-span-1"
             />
             <StatsCard
               title="Monthly Income"
-              amount="$42,500.00"
-              trend="+8.2% vs last month"
-              trendTone="positive"
+              amount={formatCurrency(currentMonthIncome)}
+              trend={formatTrend(incomeTrendValue)}
+              trendTone={incomeTrendValue > 0 ? "positive" : incomeTrendValue < 0 ? "negative" : "neutral"}
               icon={<TrendingUp className="h-5 w-5" strokeWidth={1.5} />}
-              chartData={incomeData}
+              chartData={miniIncomeData}
               chartColor="#10b981"
             />
             <StatsCard
               title="Monthly Expense"
-              amount="$18,240.50"
-              trend="-1.2% this month"
-              trendTone="negative"
+              amount={formatCurrency(currentMonthExpense)}
+              trend={formatTrend(expenseTrendValue)}
+              trendTone={expenseTrendValue < 0 ? "positive" : expenseTrendValue > 0 ? "negative" : "neutral"}
               icon={<TrendingDown className="h-5 w-5" strokeWidth={1.5} />}
               meta={
                 <>
                   <p className="text-[10px] text-neutral-600">Top category</p>
-                  <p className="text-[11px] font-medium text-rose-400">Real Estate</p>
+                  <p className="text-[11px] font-medium text-rose-400">{topCategory}</p>
                 </>
               }
-              chartData={expenseData}
+              chartData={miniExpenseData}
               chartColor="#f43f5e"
             />
           </div>
 
-          <CashFlowChart />
+          <CashFlowChart data={chartData} />
         </div>
 
         <div className="min-h-[420px] min-w-0">
-          <RecentFlow />
+          <RecentFlow transactions={recentFlows} />
         </div>
       </section>
     </>

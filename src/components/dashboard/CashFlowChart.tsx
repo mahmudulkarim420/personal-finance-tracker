@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Area,
@@ -11,33 +10,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import clsx from "clsx";
-
-const allData = {
-  "1M": [
-    { month: "May 1", value: 320000 },
-    { month: "May 8", value: 345000 },
-    { month: "May 15", value: 338000 },
-    { month: "May 22", value: 362000 },
-    { month: "Jun 1", value: 410000 },
-  ],
-  "3M": [
-    { month: "Mar", value: 220000 },
-    { month: "Apr", value: 260000 },
-    { month: "May", value: 305000 },
-    { month: "Jun", value: 410000 },
-  ],
-  YTD: [
-    { month: "Jan", value: 80000 },
-    { month: "Feb", value: 120000 },
-    { month: "Mar", value: 190000 },
-    { month: "Apr", value: 240000 },
-    { month: "May", value: 330000 },
-    { month: "Jun", value: 410000 },
-  ],
-};
-
-type TimeFilter = "1M" | "3M" | "YTD";
 
 type TooltipProps = {
   active?: boolean;
@@ -47,10 +19,14 @@ type TooltipProps = {
 
 function CustomTooltip({ active, payload, label }: TooltipProps) {
   if (active && payload && payload.length > 0) {
+    const val = payload[0].value;
+    const isNegative = val < 0;
     return (
       <div className="rounded-2xl border border-white/10 bg-[#161616]/95 px-3 py-2 shadow-2xl backdrop-blur-xl">
         <p className="mb-1 text-[11px] text-neutral-500">{label}</p>
-        <p className="text-sm font-bold text-emerald-400">${payload[0].value.toLocaleString()}</p>
+        <p className="text-sm font-bold text-emerald-400">
+          {isNegative ? "-" : ""}${Math.abs(val).toLocaleString()}
+        </p>
       </div>
     );
   }
@@ -58,10 +34,11 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
   return null;
 }
 
-export function CashFlowChart() {
-  const [active, setActive] = useState<TimeFilter>("YTD");
-  const data = allData[active];
+type CashFlowChartProps = {
+  data: { month: string; amount: number }[];
+};
 
+export function CashFlowChart({ data }: CashFlowChartProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 16 }}
@@ -75,24 +52,6 @@ export function CashFlowChart() {
           <p className="mt-1 text-xs text-neutral-500">
             Track balance momentum across your premium accounts.
           </p>
-        </div>
-
-        <div className="flex w-fit items-center gap-1 rounded-2xl border border-white/8 bg-[#0D0D0D]/90 p-1">
-          {(["1M", "3M", "YTD"] as TimeFilter[]).map((filterValue) => (
-            <button
-              key={filterValue}
-              type="button"
-              onClick={() => setActive(filterValue)}
-              className={clsx(
-                "rounded-xl px-3 py-1.5 text-[11px] font-medium transition-all duration-200",
-                active === filterValue
-                  ? "bg-emerald-500/15 text-emerald-400 shadow-[0_0_16px_rgba(16,185,129,0.14)]"
-                  : "text-neutral-500 hover:text-neutral-300"
-              )}
-            >
-              {filterValue}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -117,13 +76,17 @@ export function CashFlowChart() {
               tick={{ fill: "#737373", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(value: number) => `$${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value: number) => {
+                const absVal = Math.abs(value);
+                const prefix = value < 0 ? "-" : "";
+                return prefix + "$" + (absVal >= 1000 ? (absVal / 1000).toFixed(0) + "k" : absVal);
+              }}
               width={52}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#2A2A2A", strokeWidth: 1 }} />
             <Area
               type="monotone"
-              dataKey="value"
+              dataKey="amount"
               stroke="#10b981"
               strokeWidth={2}
               fill="url(#cashGradient)"

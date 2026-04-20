@@ -1,0 +1,49 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Ei line-ta abar add korun
+}
+
+// Baki model gulo ager motoi thakbe
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Float
+  description String?
+  date        DateTime @default(now())
+  type        String   // "INCOME" or "EXPENSE"
+  category    String
+  status      String   @default("PENDING") // Cleared, Pending
+  account     String   @default("Cash")    // Bank, Wallet, etc.
+  clerkId     String
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  category  String
+  amount    Float    // Budget limit
+  clerkId   String
+  createdAt DateTime @default(now())
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  deadline      DateTime?
+  clerkId       String
+  createdAt     DateTime @default(now())
+}
