@@ -47,3 +47,12 @@ model Goal {
   clerkId       String
   createdAt     DateTime @default(now())
 }
+
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  type      String   // INFO, WARNING, SUCCESS
+  isRead    Boolean  @default(false)
+  clerkId   String
+  createdAt DateTime @default(now())
+}
