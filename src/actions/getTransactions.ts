@@ -2,11 +2,15 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
-export type TransactionRecord = Prisma.TransactionGetPayload<{}>;
+export type TransactionRecord = Awaited<ReturnType<typeof db.transaction.findFirst>> &
+  NonNullable<unknown>;
 
-export async function getTransactions(): Promise<{ success: boolean; data?: TransactionRecord[]; error?: string }> {
+export async function getTransactions(): Promise<{
+  success: boolean;
+  data?: any[];
+  error?: string;
+}> {
   try {
     const { userId } = await auth();
 
