@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { currentUser } from "@clerk/nextjs/server";
+import { currentUser, auth } from "@clerk/nextjs/server";
 
 /**
  * Checks if the currently logged-in Clerk user exists in our Prisma database.
@@ -10,17 +10,16 @@ import { currentUser } from "@clerk/nextjs/server";
  * @returns The user object from the database, or null if no Clerk user is found.
  */
 export const checkUser = async () => {
-  // Get the logged-in user from Clerk
-  const user = await currentUser();
+  const { userId } = await auth();
 
-  if (!user) {
+  if (!userId) {
     return null;
   }
 
   // Check if a user with that clerkId already exists in our database
   const loggedInUser = await db.user.findUnique({
     where: {
-      clerkId: user.id,
+      clerkId: userId,
     },
   });
 
@@ -29,13 +28,22 @@ export const checkUser = async () => {
     return loggedInUser;
   }
 
-  // If the user doesn't exist, create a new record in the User table
-  const newUser = await db.user.create({
-    data: {
-      clerkId: user.id,
-      email: user.emailAddresses[0].emailAddress,
-    },
-  });
+  // If the user doesn't exist, we need their full object from Clerk to create them
+  try {
+    const user = await currentUser();
+    if (!user) return null;
 
-  return newUser;
+    // Create a new record in the User table
+    const newUser = await db.user.create({
+      data: {
+        clerkId: user.id,
+        email: user.emailAddresses[0].emailAddress,
+      },
+    });
+
+    return newUser;
+  } catch (error) {
+    console.error("Clerk error in checkUser:", error);
+    return null;
+  }
 };

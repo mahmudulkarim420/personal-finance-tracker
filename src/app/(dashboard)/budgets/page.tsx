@@ -28,9 +28,7 @@ export default async function BudgetsPage() {
         gte: startOfMonth,
         lte: endOfMonth,
       },
-      amount: {
-        lt: 0 // Expenses are negative
-      }
+      type: "EXPENSE" // Use type instead of assuming negative amount
     },
   });
 
@@ -38,26 +36,31 @@ export default async function BudgetsPage() {
   let totalLimit = 0;
   let totalSpent = 0;
   
-  const budgetData: Record<string, { limit: number; spent: number; count: number }> = {};
+  const budgetData: Record<string, { limit: number; spent: number; count: number; originalName: string }> = {};
   
+  // Initialize with budgets
   budgets.forEach(b => {
-    budgetData[b.category] = { limit: b.amount, spent: 0, count: 0 };
+    // Standardize category key to lowercase for matching
+    budgetData[b.category.toLowerCase()] = { limit: b.amount, spent: 0, count: 0, originalName: b.category };
     totalLimit += b.amount;
   });
 
+  // Aggregate transactions
   transactions.forEach(t => {
-    if (budgetData[t.category]) {
-      budgetData[t.category].spent += Math.abs(t.amount);
-      budgetData[t.category].count += 1;
-      totalSpent += Math.abs(t.amount);
+    const categoryKey = t.category.toLowerCase();
+    if (budgetData[categoryKey]) {
+      const absAmount = Math.abs(t.amount);
+      budgetData[categoryKey].spent += absAmount;
+      budgetData[categoryKey].count += 1;
+      totalSpent += absAmount;
     }
   });
   
-  const categoryBudgets = Object.keys(budgetData).map(category => ({
-    category,
-    limit: budgetData[category].limit,
-    spent: budgetData[category].spent,
-    transactionsCount: budgetData[category].count,
+  const categoryBudgets = Object.values(budgetData).map((data: any) => ({
+    category: data.originalName,
+    limit: data.limit,
+    spent: data.spent,
+    transactionsCount: data.count,
   }));
 
   // Velocity logic:

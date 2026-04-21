@@ -36,6 +36,8 @@ model Budget {
   amount    Float    // Budget limit
   clerkId   String
   createdAt DateTime @default(now())
+
+  @@unique([clerkId, category])
 }
 
 model Goal {

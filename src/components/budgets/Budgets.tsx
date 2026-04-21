@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Plus, Settings2, AlertCircle, Utensils, Plane, ShoppingBag, 
   ChevronRight, TrendingUp, Info, Car, CircleDollarSign, X
@@ -72,7 +73,7 @@ const BudgetItem = ({
   );
 };
 
-export default function BudgetsPage({ 
+export default function Budgets({ 
   initialBudgets = [], 
   totalLimit = 0, 
   totalSpent = 0, 
@@ -80,8 +81,10 @@ export default function BudgetsPage({
   currentDay = 1, 
   daysInMonth = 30 
 }: any) {
+  const router = useRouter();
   const currentMonth = new Date().toLocaleString('default', { month: 'long' });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'adjust'>('create');
   const [loading, setLoading] = useState(false);
   
   const [category, setCategory] = useState('');
@@ -109,11 +112,31 @@ export default function BudgetsPage({
       setIsModalOpen(false);
       setCategory('');
       setAmount('');
+      router.refresh();
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const openAdjustModal = (cat?: string, amt?: number) => {
+    setModalMode('adjust');
+    if (cat) {
+      setCategory(cat);
+      setAmount(amt?.toString() || '');
+    } else {
+      setCategory('');
+      setAmount('');
+    }
+    setIsModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setModalMode('create');
+    setCategory('');
+    setAmount('');
+    setIsModalOpen(true);
   };
 
   return (
@@ -129,11 +152,15 @@ export default function BudgetsPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5">
+          <button 
+            onClick={() => openAdjustModal()}
+            disabled={initialBudgets.length === 0}
+            className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Settings2 className="h-4 w-4" /> Adjust Limits
           </button>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={openCreateModal}
             className="flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
             <Plus className="h-4 w-4" strokeWidth={3} /> New Category
@@ -225,14 +252,21 @@ export default function BudgetsPage({
             const warning = (p > monthP * 1.15) && p > 0.5;
 
             return (
-              <BudgetItem 
-                key={b.category}
-                name={b.category} 
-                transactions={b.transactionsCount} 
-                spent={b.spent} 
-                limit={b.limit} 
-                warning={warning}
-              />
+              <div key={b.category} className="group relative">
+                <BudgetItem 
+                  name={b.category} 
+                  transactions={b.transactionsCount} 
+                  spent={b.spent} 
+                  limit={b.limit} 
+                  warning={warning}
+                />
+                <button 
+                  onClick={() => openAdjustModal(b.category, b.limit)}
+                  className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest text-neutral-500 opacity-0 transition-opacity group-hover:opacity-100 hover:text-emerald-400"
+                >
+                  Edit Limit
+                </button>
+              </div>
             );
           })}
         </div>
@@ -249,7 +283,9 @@ export default function BudgetsPage({
               className="w-full max-w-md rounded-[28px] border border-white/10 bg-[#161616] shadow-2xl"
             >
               <div className="flex items-center justify-between border-b border-white/10 p-6">
-                <h2 className="text-xl font-bold text-white">Establish Budget</h2>
+                <h2 className="text-xl font-bold text-white">
+                  {modalMode === 'create' ? 'Establish Budget' : 'Adjust Limit'}
+                </h2>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -265,14 +301,40 @@ export default function BudgetsPage({
                     <label className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                       Category
                     </label>
-                    <input
-                      type="text"
-                      className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                      placeholder="e.g. Travel, Dining, Auto"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      required
-                    />
+                    {modalMode === 'adjust' && initialBudgets.length > 0 ? (
+                      <select
+                        className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        value={category}
+                        onChange={(e) => {
+                          const selectedCategory = e.target.value;
+                          setCategory(selectedCategory);
+                          const b = initialBudgets.find((b: any) => b.category === selectedCategory);
+                          if (b) {
+                            setAmount(b.limit.toString());
+                          } else {
+                            setAmount('');
+                          }
+                        }}
+                        required
+                      >
+                        <option value="" disabled className="bg-[#161616]">Select Category</option>
+                        {initialBudgets.map((b: any) => (
+                          <option key={b.category} value={b.category} className="bg-[#161616]">
+                            {b.category}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        placeholder="e.g. Travel, Dining, Auto"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        required
+                        disabled={modalMode === 'adjust'}
+                      />
+                    )}
                   </div>
 
                   <div className="space-y-2">
