@@ -1,18 +1,40 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Download, Plus, Calendar, Layers, Tags, Search, SlidersHorizontal, 
-  Utensils, TrendingUp, Building, Plane, Palette, ChevronDown, Receipt
+  Utensils, TrendingUp, Building, Plane, Palette, ChevronDown, Receipt, Trash2
 } from 'lucide-react';
 import AddTransactionModal from './AddTransactionModal';
-import { useTransactions } from '@/hooks/useTransactions';
+import { useTransactions, groupTransactionsByDate } from '@/hooks/useTransactions';
+import { deleteTransaction } from '@/actions/deleteTransaction';
+import { Toast, ToastType } from '../ui/Toast';
+import { AlertModal } from '../ui/AlertModal';
 
 export default function LedgerTransactions() {
-  const { groupedTransactions, isLoading, refresh } = useTransactions();
+  const { transactions, isLoading, refresh } = useTransactions();
   
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("Categories");
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const filteredGroupedTransactions = useMemo(() => {
+    let filtered = transactions;
+    
+    if (selectedCategory !== "Categories") {
+      filtered = filtered.filter(tx => tx.category === selectedCategory);
+    }
+    
+    if (searchQuery) {
+      filtered = filtered.filter(tx => 
+        tx.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tx.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return groupTransactionsByDate(filtered);
+  }, [transactions, selectedCategory, searchQuery]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filterContainerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +51,44 @@ export default function LedgerTransactions() {
 
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [deleteAlert, setDeleteAlert] = useState<{ isOpen: boolean; id: string | null }>({
+    isOpen: false,
+    id: null
+  });
+
+  const [toast, setToast] = useState<{ isVisible: boolean; message: string; type: ToastType }>({
+    isVisible: false,
+    message: '',
+    type: 'success'
+  });
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ isVisible: true, message, type });
+  };
+
+  const closeToast = React.useCallback(() => {
+    setToast(prev => ({ ...prev, isVisible: false }));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    setIsDeleting(id);
+    try {
+      const result = await deleteTransaction(id);
+      if (result.success) {
+        refresh();
+        showToast("Transaction successfully purged from ledger", "success");
+      } else {
+        showToast(result.error || "Failed to delete transaction", "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Critical error during transaction deletion", "error");
+    } finally {
+      setIsDeleting(null);
+    }
   };
 
   const CATEGORIES = ["Dining", "Dividend Yield", "Real Estate", "Travel", "Art & Collectibles", "Salary", "Utilities"];
@@ -86,6 +146,18 @@ export default function LedgerTransactions() {
             )}
           </div>
         </div>
+
+        {/* Search Input */}
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <input 
+            type="text" 
+            placeholder="Search records..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-11 pr-4 text-sm text-white outline-none transition-all focus:border-emerald-500/50 focus:bg-white/10"
+          />
+        </div>
       </div>
 
       {/* Dynamic Data Mapping and States */}
@@ -106,26 +178,20 @@ export default function LedgerTransactions() {
               </div>
             ))}
           </div>
-        ) : groupedTransactions.length === 0 ? (
+        ) : filteredGroupedTransactions.length === 0 ? (
           // Empty State
           <div className="flex flex-col items-center justify-center py-20 text-center border border-white/5 rounded-3xl bg-white/5">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-neutral-400 mb-4">
               <Receipt className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No Transactions Yet</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">No Matching Records</h3>
             <p className="text-neutral-400 max-w-sm mb-6 text-sm">
-              Your ledger is completely clean. Start adding your capital flows to see them dynamically mapped here.
+              Your search parameters returned zero results. Try adjusting your filters.
             </p>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-emerald-400"
-            >
-              <Plus className="h-4 w-4" strokeWidth={2.5} /> Add File
-            </button>
           </div>
         ) : (
           // Mapped Data Display
-          groupedTransactions.map((group) => (
+          filteredGroupedTransactions.map((group) => (
             <div key={group.label}>
               <h2 className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-500">
                 {group.label}
@@ -153,6 +219,16 @@ export default function LedgerTransactions() {
                         <span className={`w-24 text-right text-sm font-medium ${isIncome ? "text-emerald-400" : "text-white"}`}>
                           {isIncome ? "+" : "-"}${Math.abs(tx.amount).toFixed(2)}
                         </span>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteAlert({ isOpen: true, id: tx.id });
+                          }}
+                          disabled={isDeleting === tx.id}
+                          className="rounded-lg p-2 text-neutral-500 transition-all hover:bg-rose-500/10 hover:text-rose-500 disabled:opacity-50"
+                        >
+                          <Trash2 className={`h-4 w-4 ${isDeleting === tx.id ? "animate-pulse" : ""}`} />
+                        </button>
                       </div>
                     </div>
                   );
@@ -169,6 +245,25 @@ export default function LedgerTransactions() {
           setIsModalOpen(false);
           refresh(); // Auto-refresh data when modal closes
         }} 
+      />
+
+      <Toast 
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={closeToast}
+      />
+
+      <AlertModal 
+        isOpen={deleteAlert.isOpen}
+        onClose={() => setDeleteAlert({ isOpen: false, id: null })}
+        onConfirm={() => {
+          if (deleteAlert.id) handleDelete(deleteAlert.id);
+        }}
+        title="Purge Transaction?"
+        description="This action will permanently delete this record from your wealth ledger. This cannot be undone."
+        confirmText="Purge Record"
+        variant="danger"
       />
     </div>
   );

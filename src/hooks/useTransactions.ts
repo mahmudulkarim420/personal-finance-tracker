@@ -46,7 +46,7 @@ export function useTransactions() {
 }
 
 // Logic to group transactions properly into TODAY, YESTERDAY, OLDER
-function groupTransactionsByDate(transactions: TransactionRecord[]): GroupedTransactions[] {
+export function groupTransactionsByDate(transactions: TransactionRecord[]): GroupedTransactions[] {
   if (!transactions.length) return [];
 
   const today = new Date();
