@@ -170,7 +170,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 
   const countMap = new Map(counts.map((c: TransactionCountByClerkId) => [c.clerkId, c._count.id]));
 
-  return users.map((u) => ({
+  return users.map((u: any) => ({
     id: u.id,
     clerkId: u.clerkId,
     email: u.email,
