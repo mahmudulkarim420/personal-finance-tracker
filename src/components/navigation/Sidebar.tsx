@@ -31,17 +31,17 @@ const adminItems = [
   { icon: Users, label: "Manage Users", href: "/admin/users" },
 ];
 
-function SidebarContent({ 
-  pathname, 
-  onClose, 
-  isAdmin, 
-  sectionLabel, 
-  currentItems 
-}: { 
-  pathname: string; 
-  onClose: () => void; 
-  isAdmin: boolean; 
-  sectionLabel: string; 
+function SidebarContent({
+  pathname,
+  onClose,
+  isAdmin,
+  sectionLabel,
+  currentItems,
+}: {
+  pathname: string;
+  onClose: () => void;
+  isAdmin: boolean;
+  sectionLabel: string;
   currentItems: typeof navItems;
 }) {
   return (
@@ -59,8 +59,8 @@ function SidebarContent({
             </p>
           </div>
         </div>
-        
-        <button 
+
+        <button
           onClick={onClose}
           className="lg:hidden p-2 text-neutral-500 hover:text-white transition-colors"
           aria-label="Close menu"
@@ -86,7 +86,7 @@ function SidebarContent({
                     ? isAdmin
                       ? "text-purple-400"
                       : "text-emerald-400"
-                    : "text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300"
+                    : "text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300",
                 )}
               >
                 {isActive && (
@@ -94,7 +94,7 @@ function SidebarContent({
                     layoutId="active-pill"
                     className={clsx(
                       "absolute inset-0 rounded-2xl border border-white/5",
-                      isAdmin ? "bg-purple-500/10" : "bg-emerald-500/10"
+                      isAdmin ? "bg-purple-500/10" : "bg-emerald-500/10",
                     )}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
@@ -103,19 +103,23 @@ function SidebarContent({
                   className={clsx(
                     "relative z-10 h-4.5 w-4.5 transition-colors duration-300",
                     isActive
-                      ? isAdmin ? "text-purple-400" : "text-emerald-400"
-                      : "text-neutral-600 group-hover:text-neutral-400"
+                      ? isAdmin
+                        ? "text-purple-400"
+                        : "text-emerald-400"
+                      : "text-neutral-600 group-hover:text-neutral-400",
                   )}
                   strokeWidth={1.5}
                 />
                 <span className="relative z-10 flex-1">{item.label}</span>
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="active-indicator"
                     className={clsx(
                       "h-1 w-1 rounded-full relative z-10",
-                      isAdmin ? "bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]" : "bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
-                    )} 
+                      isAdmin
+                        ? "bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+                        : "bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]",
+                    )}
                   />
                 )}
               </Link>
@@ -151,7 +155,9 @@ export function Sidebar({ className }: { className?: string }) {
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => { document.body.style.overflow = "unset"; };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
   const role = user?.publicMetadata?.role as string | undefined;
@@ -164,16 +170,18 @@ export function Sidebar({ className }: { className?: string }) {
   return (
     <>
       {/* Desktop Persistent Sidebar */}
-      <aside className={clsx(
-        "hidden lg:flex fixed left-0 top-0 bottom-0 w-[280px] flex-col border-r border-white/5 bg-[#08090A] z-40",
-        className
-      )}>
-        <SidebarContent 
-          pathname={pathname} 
-          onClose={onClose} 
-          isAdmin={isAdmin} 
-          sectionLabel={sectionLabel} 
-          currentItems={currentItems} 
+      <aside
+        className={clsx(
+          "hidden lg:flex fixed left-0 top-0 bottom-0 w-[280px] flex-col border-r border-white/5 bg-[#08090A] z-40",
+          className,
+        )}
+      >
+        <SidebarContent
+          pathname={pathname}
+          onClose={onClose}
+          isAdmin={isAdmin}
+          sectionLabel={sectionLabel}
+          currentItems={currentItems}
         />
       </aside>
 
@@ -197,12 +205,12 @@ export function Sidebar({ className }: { className?: string }) {
               transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
               className="absolute left-0 top-0 bottom-0 w-[300px] max-w-[85%] bg-[#08090A] border-r border-white/10 shadow-2xl flex flex-col"
             >
-              <SidebarContent 
-                pathname={pathname} 
-                onClose={onClose} 
-                isAdmin={isAdmin} 
-                sectionLabel={sectionLabel} 
-                currentItems={currentItems} 
+              <SidebarContent
+                pathname={pathname}
+                onClose={onClose}
+                isAdmin={isAdmin}
+                sectionLabel={sectionLabel}
+                currentItems={currentItems}
               />
             </motion.aside>
           </div>

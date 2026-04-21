@@ -18,7 +18,7 @@ async function requireAdmin() {
   });
 
   if (!dbUser || dbUser.role !== "admin") {
-    console.error(`Admin access denied for user ${userId}. Role in DB: ${dbUser?.role || 'none'}`);
+    console.error(`Admin access denied for user ${userId}. Role in DB: ${dbUser?.role || "none"}`);
     throw new Error("Unauthorized – admin only");
   }
 
@@ -51,6 +51,13 @@ export type AdminUser = {
   role: string;
   createdAt: Date;
   transactionCount: number;
+};
+
+type TransactionCountByClerkId = {
+  clerkId: string;
+  _count: {
+    id: number;
+  };
 };
 
 // ─── Platform Stats ───────────────────────────────────────────────────────────
@@ -161,7 +168,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
     _count: { id: true },
   });
 
-  const countMap = new Map(counts.map((c) => [c.clerkId, c._count.id]));
+  const countMap = new Map(counts.map((c: TransactionCountByClerkId) => [c.clerkId, c._count.id]));
 
   return users.map((u) => ({
     id: u.id,
@@ -177,7 +184,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 
 export async function toggleUserRole(
   targetId: string,
-  currentRole: string
+  currentRole: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const adminId = await requireAdmin();
@@ -202,9 +209,7 @@ export async function toggleUserRole(
 
 // ─── Delete User ──────────────────────────────────────────────────────────────
 
-export async function deleteUser(
-  targetId: string
-): Promise<{ success: boolean; error?: string }> {
+export async function deleteUser(targetId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const adminId = await requireAdmin();
 

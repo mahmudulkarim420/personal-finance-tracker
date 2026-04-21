@@ -50,11 +50,13 @@ export default function Header() {
 
   return (
     <>
-      <div className={clsx(
-        "fixed transition-all duration-700 ease-in-out z-50",
-        "top-4 left-4 right-4 h-16",
-        "lg:top-6 lg:left-[300px] lg:right-8 lg:h-20"
-      )}>
+      <div
+        className={clsx(
+          "fixed transition-all duration-700 ease-in-out z-50",
+          "top-4 left-4 right-4 h-16",
+          "lg:top-6 lg:left-[300px] lg:right-8 lg:h-20",
+        )}
+      >
         {/* Inner Max-Width Container - Aligns with main content max-width */}
         <div className="mx-auto w-full h-full max-w-[1600px]">
           <motion.header
@@ -65,7 +67,7 @@ export default function Header() {
               "flex h-full items-center justify-between",
               "rounded-[24px] sm:rounded-[28px] border border-white/10 bg-[#08090A]/60 px-4 md:px-6 lg:px-8",
               "shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-3xl ring-1 ring-white/5",
-              "hover:border-white/15 transition-colors duration-500"
+              "hover:border-white/15 transition-colors duration-500",
             )}
           >
             <div className="flex items-center gap-4">
@@ -91,7 +93,10 @@ export default function Header() {
               className="flex flex-1 mx-2 sm:mx-6 items-center gap-2 bg-[#121214] border border-white/5 rounded-xl px-4 py-2 max-w-md group hover:border-emerald-500/30 transition-all duration-300 text-left shadow-inner"
               aria-label="Open command search (Ctrl+K)"
             >
-              <Search className="w-4 h-4 text-neutral-500 shrink-0 group-hover:text-emerald-400 transition-colors" strokeWidth={1.5} />
+              <Search
+                className="w-4 h-4 text-neutral-500 shrink-0 group-hover:text-emerald-400 transition-colors"
+                strokeWidth={1.5}
+              />
               <span className="text-[13px] text-neutral-500 flex-1 truncate font-medium">
                 {role === "admin" ? "Search system…" : "Search transactions…"}
               </span>
@@ -141,11 +146,7 @@ export default function Header() {
                       {user?.fullName || user?.username || "Guest"}
                     </span>
                     <span className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest">
-                      {isRoleLoaded
-                        ? role === "admin"
-                          ? "Admiral"
-                          : "Standard"
-                        : "..."}
+                      {isRoleLoaded ? (role === "admin" ? "Admiral" : "Standard") : "..."}
                     </span>
                   </div>
                   <div className="relative ">
