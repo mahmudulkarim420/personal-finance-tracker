@@ -35,25 +35,27 @@ export default function LedgerTransactions() {
 
   return (
     <div className="w-full relative min-h-[60vh]">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.32em] text-neutral-500">Transactions</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Ledger</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">
-            Comprehensive chronological view of all capital flows across your linked portfolios and operating accounts.
+          <p className="mb-3 text-[10px] md:text-xs uppercase tracking-[0.4em] text-emerald-500/60 font-bold">Chronology</p>
+          <h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold tracking-tight text-white mb-3">Wealth Ledger</h1>
+          <p className="max-w-2xl text-sm md:text-base leading-relaxed text-neutral-500 font-medium">
+            A comprehensive, high-fidelity mapping of all capital flows across your private ecosystem.
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-6">
           <button 
-            className="flex items-center gap-2 text-sm font-medium text-neutral-400 transition-colors hover:text-white"
+            className="flex items-center justify-center gap-2 text-sm font-bold text-neutral-500 transition-all duration-300 hover:text-white group"
           >
-            <Download className="h-4 w-4" /> Export
+            <Download className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform" /> 
+            <span className="tracking-wide">Export Manifest</span>
           </button>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-emerald-400"
+            className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-black transition-all duration-300 hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_24px_rgba(16,185,129,0.2)]"
           >
-            <Plus className="h-4 w-4" strokeWidth={2.5} /> Manual Entry
+            <Plus className="h-4 w-4" strokeWidth={3} /> 
+            <span className="tracking-tight">Manual Entry</span>
           </button>
         </div>
       </div>

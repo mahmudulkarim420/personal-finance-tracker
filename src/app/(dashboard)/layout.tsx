@@ -2,12 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/navigation/Sidebar";
 import Header from "@/components/dashboard/Header";
+import { MobileMenuProvider } from "@/context/MobileMenuContext";
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -15,16 +12,25 @@ export default async function DashboardLayout({
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.10),_transparent_24%),linear-gradient(180deg,_#08090C_0%,_#0D0D0F_50%,_#08090C_100%)] px-4 py-4 text-white sm:px-6 lg:px-8 lg:py-8">
-      <div className="mx-auto flex h-full min-h-[calc(100vh-4rem)] w-full max-w-[1700px] flex-col gap-4 lg:flex-row">
-        <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-hidden">
+    <MobileMenuProvider>
+      <main className="relative min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.08),_transparent_24%),linear-gradient(180deg,_#08090A_0%,_#0B0C0E_50%,_#08090A_100%)] text-white overflow-x-hidden">
+        {/* Persistent Sidebar (Desktop) / Drawer (Mobile) */}
+        <Sidebar aria-label="Main Navigation" />
+
+        <div className="flex flex-col min-h-screen transition-all duration-500 ease-in-out lg:pl-[300px]">
           <Header />
-          <section className="min-w-0 flex-1 overflow-y-auto rounded-[32px] border border-white/10 bg-white/[0.03] p-4 shadow-[0_32px_120px_rgba(0,0,0,0.30)] backdrop-blur-xl sm:p-6">
-            {children}
+
+          {/* Main Content Area */}
+          <section 
+            id="main-content"
+            className="flex-1 px-4 pb-8 pt-24 md:px-6 lg:px-8 lg:pt-36"
+          >
+            <div className="mx-auto w-full max-w-[1600px]">
+              {children}
+            </div>
           </section>
         </div>
-      </div>
-    </main>
+      </main>
+    </MobileMenuProvider>
   );
 }
