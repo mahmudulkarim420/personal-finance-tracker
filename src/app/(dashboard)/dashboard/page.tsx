@@ -47,24 +47,28 @@ export default async function DashboardPage() {
   const expenseCategories: Record<string, number> = {};
 
   transactions.forEach((t) => {
-    totalBalance += t.amount;
+    const isExpense = t.type === "EXPENSE" || t.amount < 0;
+    const absAmount = Math.abs(t.amount);
+    
+    // Total Balance calculation (Net)
+    totalBalance += isExpense ? -absAmount : absAmount;
     
     const d = new Date(t.date);
     const m = d.getMonth();
     const y = d.getFullYear();
 
     if (m === currentMonth && y === currentYear) {
-      if (t.amount > 0) {
-        currentMonthIncome += t.amount;
+      if (isExpense) {
+        currentMonthExpense += absAmount;
+        expenseCategories[t.category] = (expenseCategories[t.category] || 0) + absAmount;
       } else {
-        currentMonthExpense += Math.abs(t.amount);
-        expenseCategories[t.category] = (expenseCategories[t.category] || 0) + Math.abs(t.amount);
+        currentMonthIncome += absAmount;
       }
     } else if (m === lastMonth && y === lastMonthYear) {
-      if (t.amount > 0) {
-        lastMonthIncome += t.amount;
+      if (isExpense) {
+        lastMonthExpense += absAmount;
       } else {
-        lastMonthExpense += Math.abs(t.amount);
+        lastMonthIncome += absAmount;
       }
     }
   });
@@ -109,7 +113,9 @@ export default async function DashboardPage() {
     const d = new Date(t.date);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     if (chartDataMap[key] !== undefined) {
-      chartData[chartDataMap[key]].amount += t.amount; // net flow
+      const isExpense = t.type === "EXPENSE" || t.amount < 0;
+      const absAmount = Math.abs(t.amount);
+      chartData[chartDataMap[key]].amount += isExpense ? -absAmount : absAmount; // net flow
     }
   });
 

@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BudgetsPage() {
   await checkUser();
   const { userId } = await auth();
@@ -28,9 +30,10 @@ export default async function BudgetsPage() {
         gte: startOfMonth,
         lte: endOfMonth,
       },
-      type: "EXPENSE" // Use type instead of assuming negative amount
     },
   });
+
+  const filteredExpenses = transactions.filter(t => t.type === "EXPENSE" || t.amount < 0);
 
   // Calculate totals
   let totalLimit = 0;
@@ -46,7 +49,7 @@ export default async function BudgetsPage() {
   });
 
   // Aggregate transactions
-  transactions.forEach(t => {
+  filteredExpenses.forEach(t => {
     const categoryKey = t.category.toLowerCase();
     if (budgetData[categoryKey]) {
       const absAmount = Math.abs(t.amount);

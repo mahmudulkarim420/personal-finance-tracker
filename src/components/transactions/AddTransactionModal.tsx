@@ -11,12 +11,12 @@ import clsx from "clsx";
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  budgetCategories?: string[];
 }
 
-const CATEGORIES = ["Dining", "Dividend Yield", "Real Estate", "Travel", "Art & Collectibles", "Salary", "Utilities"];
 const ACCOUNTS = ["Platinum Reserve", "Brokerage *8821", "Operating Acct"];
 
-export default function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProps) {
+export default function AddTransactionModal({ isOpen, onClose, budgetCategories = [] }: AddTransactionModalProps) {
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -31,13 +31,16 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
     defaultValues: {
       amount: 0,
       description: "",
-      category: CATEGORIES[0],
+      category: budgetCategories[0] || "General",
       account: ACCOUNTS[0],
       date: new Date().toISOString().split("T")[0],
+      type: "EXPENSE",
     },
   });
 
   const amountValue = watch("amount");
+  const typeValue = watch("type");
+  const { setValue } = useForm<TransactionFormData>(); // for manual sets if needed
 
   const onSubmit = (data: TransactionFormData) => {
     setErrorMsg("");
@@ -80,6 +83,30 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
             {errorMsg}
           </div>
         )}
+
+        {/* Type Toggle */}
+        <div className="mb-8 flex p-1.5 bg-white/5 rounded-2xl border border-white/5">
+          <button
+            type="button"
+            onClick={() => reset({ ...watch(), type: "EXPENSE" })}
+            className={clsx(
+              "flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300",
+              typeValue === "EXPENSE" ? "bg-rose-500 text-black shadow-lg shadow-rose-500/20" : "text-neutral-500 hover:text-white"
+            )}
+          >
+            Expense
+          </button>
+          <button
+            type="button"
+            onClick={() => reset({ ...watch(), type: "INCOME" })}
+            className={clsx(
+              "flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300",
+              typeValue === "INCOME" ? "bg-emerald-500 text-black shadow-lg shadow-emerald-500/20" : "text-neutral-500 hover:text-white"
+            )}
+          >
+            Income
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
@@ -136,7 +163,11 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
                 {...register("category")}
                 className="w-full appearance-none rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-sm font-semibold text-white outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 shadow-inner"
               >
-                {CATEGORIES.map(cat => <option key={cat} value={cat} className="bg-[#08090A]">{cat}</option>)}
+                {budgetCategories.length > 0 ? (
+                  budgetCategories.map(cat => <option key={cat} value={cat} className="bg-[#08090A]">{cat}</option>)
+                ) : (
+                  <option value="General" className="bg-[#08090A]">General (Add a budget first)</option>
+                )}
               </select>
               {errors.category && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.category.message}</p>}
             </div>

@@ -27,9 +27,7 @@ export async function addTransaction(data: TransactionFormData) {
       };
     }
 
-    const { amount, description, category, account, date } = validatedData.data;
-
-    const type = amount > 0 ? "INCOME" : "EXPENSE";
+    const { amount, description, category, account, date, type } = validatedData.data;
 
     // Create the transaction
     const transaction = await db.transaction.create({

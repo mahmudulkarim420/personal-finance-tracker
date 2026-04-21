@@ -148,7 +148,7 @@ export default function Header() {
                         : "..."}
                     </span>
                   </div>
-                  <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-white/5 to-white/20 ring-1 ring-white/10">
+                  <div className="relative ">
                     <UserButton
                       appearance={{
                         elements: {

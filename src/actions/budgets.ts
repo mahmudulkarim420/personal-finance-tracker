@@ -26,5 +26,8 @@ export async function addBudget(data: { category: string; amount: number }) {
   });
 
   revalidatePath("/budgets");
-  return budget;
+  revalidatePath("/dashboard");
+  revalidatePath("/transactions");
+  
+  return { success: true, data: budget };
 }
