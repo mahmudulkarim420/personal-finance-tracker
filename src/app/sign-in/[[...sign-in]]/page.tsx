@@ -3,7 +3,7 @@ import { SignIn } from "@clerk/nextjs";
 export default function SignInPage() {
   return (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <SignIn />
+      <SignIn path="/sign-in" />
     </div>
   );
 }
