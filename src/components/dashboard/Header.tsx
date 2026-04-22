@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Search, Bell, HelpCircle, Menu } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { useRole } from "@/hooks/use-role";
+import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import clsx from "clsx";
@@ -19,6 +20,12 @@ export default function Header() {
   const { isLoaded, user } = useUser();
   const { role, isLoaded: isRoleLoaded } = useRole();
   const { toggle: toggleMobileMenu } = useMobileMenu();
+  const pathname = usePathname();
+
+  // Determine if we're in admin context to adjust layout
+  const isInAdminContext = pathname?.startsWith("/admin") ?? false;
+  // Admin sidebar is 280px, User sidebar is 300px
+  const sidebarLeft = isInAdminContext ? "lg:left-[280px]" : "lg:left-[300px]";
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -54,7 +61,8 @@ export default function Header() {
         className={clsx(
           "fixed transition-all duration-700 ease-in-out z-50",
           "top-4 left-4 right-4 h-16",
-          "lg:top-6 lg:left-[300px] lg:right-8 lg:h-20",
+          "lg:top-6 lg:right-8 lg:h-20",
+          sidebarLeft,
         )}
       >
         {/* Inner Max-Width Container - Aligns with main content max-width */}

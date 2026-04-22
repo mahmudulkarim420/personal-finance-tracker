@@ -7,21 +7,35 @@ import { revalidatePath } from "next/cache";
 // ─── Guard helper (Prisma DB is source of truth — not Clerk session claims) ──
 async function requireAdmin() {
   const { userId } = await auth();
+
+  console.log(`[requireAdmin] Checking admin access for clerkId: ${userId ?? "(unauthenticated)"}`);
+
   if (!userId) throw new Error("Unauthorized – not authenticated");
 
-  // Always read the role from the database, never from the JWT/sessionClaims.
-  // Clerk session tokens are cached and may not reflect a role change until
-  // the user signs out and back in.
+  // Always read the role from the database — Clerk JWT claims are cached
+  // and may be stale. The DB is the single source of truth after checkUser syncs it.
   const dbUser = await db.user.findUnique({
     where: { clerkId: userId },
     select: { role: true },
   });
 
-  if (!dbUser || dbUser.role !== "admin") {
-    console.error(`Admin access denied for user ${userId}. Role in DB: ${dbUser?.role || "none"}`);
+  console.log(
+    `[requireAdmin] DB lookup result → clerkId=${userId} | found=${!!dbUser} | role="${dbUser?.role ?? "(no record)"}"`,
+  );
+
+  if (!dbUser) {
+    console.error(`[requireAdmin] ❌ No DB record for clerkId=${userId}. Did checkUser run?`);
+    throw new Error("Unauthorized – user not found in DB");
+  }
+
+  if (dbUser.role !== "admin") {
+    console.error(
+      `[requireAdmin] ❌ Access denied — clerkId=${userId} has role="${dbUser.role}", expected "admin"`,
+    );
     throw new Error("Unauthorized – admin only");
   }
 
+  console.log(`[requireAdmin] ✅ Admin access granted for clerkId=${userId}`);
   return userId;
 }
 

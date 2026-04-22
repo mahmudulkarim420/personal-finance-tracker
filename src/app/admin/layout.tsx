@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/navigation/Sidebar";
 import Header from "@/components/dashboard/Header";
 import { db } from "@/lib/db";
 import { MobileMenuProvider } from "@/context/MobileMenuContext";
+import { checkUser } from "@/actions/checkUser";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { userId, sessionClaims } = await auth();
@@ -14,16 +15,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   // Handle session sync delay - sessionClaims may be null briefly after sign-in
   if (!sessionClaims) {
-    // Session is still syncing, render nothing or a loading state
-    // The middleware will handle the redirect if needed on next request
     return null;
   }
 
-  // Source of Truth: Check database role
+  // ── Sync Clerk publicMetadata.role → DB before the gate check ──────────────
+  // This ensures that promoting a user in the Clerk dashboard takes effect
+  // immediately on the next page visit without any manual DB edits.
+  await checkUser();
+
+  // Source of Truth: Check database role (now freshly synced)
   const dbUser = await db.user.findUnique({
-    where: { clerkId: userId },
+    where: { clerkId: userId! },
     select: { role: true },
   });
+
+  console.log(`[AdminLayout] clerkId=${userId} | DB role="${dbUser?.role ?? "(none)"}"`);
 
   // If no db user found or role is not admin, redirect to dashboard
   if (!dbUser || dbUser.role !== "admin") {

@@ -1,49 +1,58 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { currentUser, auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 /**
- * Checks if the currently logged-in Clerk user exists in our Prisma database.
- * If they do not exist, it creates a new record for them.
- * 
- * @returns The user object from the database, or null if no Clerk user is found.
+ * Syncs the currently logged-in Clerk user with our Prisma database.
+ *
+ * Role sync strategy (promotion-only, never demotes):
+ * - New user      → role comes from Clerk publicMetadata.role (default: "user")
+ * - Existing user → only upgrade to "admin" if Clerk says so.
+ *                   Never overwrite an existing "admin" with "user".
+ *
+ * This means:
+ *   - Promoting in Clerk dashboard → takes effect on next visit ✅
+ *   - Manual DB promotion          → stays intact on next visit ✅
+ *
+ * @returns The up-to-date user object from the database, or null.
  */
 export const checkUser = async () => {
-  const { userId } = await auth();
+  const user = await currentUser();
+  if (!user) return null;
 
-  if (!userId) {
-    return null;
-  }
+  // Read the role Clerk carries in publicMetadata.
+  // Falls back to "user" if not set.
+  const clerkRole =
+    (user.publicMetadata?.role as string | undefined) ?? "user";
 
-  // Check if a user with that clerkId already exists in our database
-  const loggedInUser = await db.user.findUnique({
-    where: {
-      clerkId: userId,
-    },
-  });
+  console.log(
+    `[checkUser] clerkId=${user.id} | Clerk metadata role="${clerkRole}"`
+  );
 
-  // If the user exists, return the user object
-  if (loggedInUser) {
-    return loggedInUser;
-  }
-
-  // If the user doesn't exist, we need their full object from Clerk to create them
   try {
-    const user = await currentUser();
-    if (!user) return null;
-
-    // Create a new record in the User table
-    const newUser = await db.user.create({
-      data: {
+    const dbUser = await db.user.upsert({
+      where: { clerkId: user.id },
+      create: {
+        // First time: use whatever Clerk says (could be "admin" if set before first login)
         clerkId: user.id,
         email: user.emailAddresses[0].emailAddress,
+        role: clerkRole,
+      },
+      update: {
+        // Promotion-only: only write "admin" if Clerk explicitly grants it.
+        // If Clerk says "user" but DB already has "admin", keep "admin" intact.
+        ...(clerkRole === "admin" ? { role: "admin" } : {}),
       },
     });
 
-    return newUser;
+    console.log(
+      `[checkUser] DB synced → clerkId=${dbUser.clerkId} | final role="${dbUser.role}"`
+    );
+
+    return dbUser;
   } catch (error) {
-    console.error("Clerk error in checkUser:", error);
+    console.error("[checkUser] DB upsert failed:", error);
     return null;
   }
 };

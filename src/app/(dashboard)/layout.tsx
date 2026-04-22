@@ -21,13 +21,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Header />
 
           {/* Main Content Area */}
-          <section 
-            id="main-content"
-            className="flex-1 px-4 pb-8 pt-24 md:px-6 lg:px-8 lg:pt-36"
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              {children}
-            </div>
+          <section id="main-content" className="flex-1 px-4 pb-8 pt-24 md:px-6 lg:px-8 lg:pt-36">
+            <div className="mx-auto w-full max-w-[1600px]">{children}</div>
           </section>
         </div>
       </main>

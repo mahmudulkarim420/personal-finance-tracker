@@ -19,17 +19,26 @@ import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useEffect } from "react";
 
-const navItems = [
+// User navigation items
+const userNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: ArrowLeftRight, label: "Transactions", href: "/transactions" },
   { icon: PieChart, label: "Budgets", href: "/budgets" },
   { icon: Target, label: "Goals", href: "/goals" },
 ];
 
-const adminItems = [
+// Admin navigation items
+const adminNavItems = [
   { icon: ShieldCheck, label: "Admin Overview", href: "/admin/overview" },
   { icon: Users, label: "Manage Users", href: "/admin/users" },
 ];
+
+// Navigation item type
+interface NavItem {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  label: string;
+  href: string;
+}
 
 function SidebarContent({
   pathname,
@@ -42,7 +51,7 @@ function SidebarContent({
   onClose: () => void;
   isAdmin: boolean;
   sectionLabel: string;
-  currentItems: typeof navItems;
+  currentItems: NavItem[];
 }) {
   return (
     <div className="flex h-full w-full flex-col p-6 overflow-y-auto">
@@ -160,10 +169,14 @@ export function Sidebar({ className }: { className?: string }) {
     };
   }, [isOpen]);
 
+  // STRICT ISOLATION: Use role to determine navigation, NOT pathname
+  // Admins ONLY see admin navigation and cannot access user routes
   const role = user?.publicMetadata?.role as string | undefined;
   const isAdmin = role === "admin";
-  const currentItems = isAdmin ? adminItems : navItems;
-  const sectionLabel = isAdmin ? "Authority" : "Navigation";
+
+  // Admins see ONLY admin items, regular users see user items
+  const currentItems = isAdmin ? adminNavItems : userNavItems;
+  const sectionLabel = isAdmin ? "Admin" : "Navigation";
 
   if (!isLoaded) return null;
 
