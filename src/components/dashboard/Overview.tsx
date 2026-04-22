@@ -54,7 +54,7 @@ export function Overview({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-emerald-500/60 font-bold"
+            className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-primary/80 font-black"
           >
             Intelligence Overview
           </motion.p>
@@ -62,7 +62,7 @@ export function Overview({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-2 text-2xl md:text-4xl 2xl:text-5xl font-bold tracking-tight text-white"
+            className="mt-2 text-2xl md:text-4xl 2xl:text-5xl font-black tracking-tight text-neutral"
           >
             Financial Command <br className="hidden sm:block md:hidden" /> Center
           </motion.h1>
@@ -70,10 +70,10 @@ export function Overview({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mt-3 max-w-2xl text-sm md:text-base text-neutral-500 leading-relaxed font-medium"
+            className="mt-3 max-w-2xl text-sm md:text-base text-accent font-black leading-relaxed"
           >
             Monitor liquidity, spending pressure, and wealth momentum from your 
-            private glassmorphism workstation.
+            private financial workstation.
           </motion.p>
         </div>
       </div>
@@ -87,7 +87,7 @@ export function Overview({
               trend={formatTrend(netFlowTrend)}
               trendTone={netFlowTrend > 0 ? "positive" : netFlowTrend < 0 ? "negative" : "neutral"}
               icon={<Landmark className="h-5 w-5" strokeWidth={1.5} />}
-              className="md:col-span-2 2xl:col-span-1 border-emerald-500/20 bg-emerald-500/[0.02]"
+              className="md:col-span-2 2xl:col-span-1 border-base-300 bg-base-200"
             />
             <StatsCard
               title="Monthly Income"
@@ -96,7 +96,7 @@ export function Overview({
               trendTone={incomeTrendValue > 0 ? "positive" : incomeTrendValue < 0 ? "negative" : "neutral"}
               icon={<TrendingUp className="h-5 w-5" strokeWidth={1.5} />}
               chartData={miniIncomeData}
-              chartColor="#10b981"
+              chartColor="#b34800"
             />
             <StatsCard
               title="Monthly Expense"
@@ -106,16 +106,16 @@ export function Overview({
               icon={<TrendingDown className="h-5 w-5" strokeWidth={1.5} />}
               meta={
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="text-[10px] text-neutral-600 uppercase font-bold tracking-tight">Top category:</p>
-                  <p className="text-[11px] font-bold text-rose-400/90">{topCategory}</p>
+                  <p className="text-[10px] text-accent/60 uppercase font-black tracking-tight">Top category:</p>
+                  <p className="text-[11px] font-black text-neutral">{topCategory}</p>
                 </div>
               }
               chartData={miniExpenseData}
-              chartColor="#f43f5e"
+              chartColor="#b34800"
             />
           </div>
 
-          <div className="rounded-[32px] border border-white/5 bg-white/[0.02] p-1 shadow-2xl backdrop-blur-sm overflow-hidden">
+          <div className="rounded-[32px] border border-base-300 bg-base-200 p-1 shadow-sm overflow-hidden">
             <CashFlowChart data={chartData} />
           </div>
         </div>

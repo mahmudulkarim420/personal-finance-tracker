@@ -129,7 +129,7 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-neutral/40 backdrop-blur-sm"
           />
 
           {/* Palette */}
@@ -139,15 +139,15 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -12 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed left-1/2 top-[15%] z-50 w-full max-w-[560px] -translate-x-1/2 overflow-hidden rounded-[20px] border border-white/10 bg-[#0D0D0D]/95 shadow-[0_32px_120px_rgba(0,0,0,0.6)] backdrop-blur-2xl"
+            className="fixed left-1/2 top-[15%] z-50 w-full max-w-[560px] -translate-x-1/2 overflow-hidden rounded-[20px] border border-base-300 bg-white shadow-2xl"
           >
             {/* Search input row */}
-            <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3.5">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5">
+            <div className="flex items-center gap-3 border-b border-base-200 px-4 py-3.5">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-base-300 bg-base-200">
                 {isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-400" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-accent/60" />
                 ) : (
-                  <Search className="h-3.5 w-3.5 text-neutral-400" />
+                  <Search className="h-3.5 w-3.5 text-accent/60" />
                 )}
               </div>
               <input
@@ -159,9 +159,9 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
                     ? "Search admin pages…"
                     : "Search transactions, pages…"
                 }
-                className="flex-1 bg-transparent text-[14px] text-white placeholder:text-neutral-600 outline-none"
+                className="flex-1 bg-transparent text-[14px] font-black text-neutral placeholder:text-accent/40 outline-none"
               />
-              <kbd className="hidden text-[10px] text-neutral-600 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 font-mono sm:block">
+              <kbd className="hidden text-[10px] text-accent/60 bg-base-200 border border-base-300 rounded px-1.5 py-0.5 font-mono sm:block">
                 ESC
               </kbd>
             </div>
@@ -171,18 +171,18 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
               ref={listRef}
               className="max-h-[380px] overflow-y-auto overscroll-contain py-2 custom-scrollbar"
             >
-              {results.length === 0 && !isPending && (
+               {results.length === 0 && !isPending && (
                 <li className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-                  <Hash className="h-8 w-8 text-neutral-700" strokeWidth={1.2} />
-                  <p className="text-sm text-neutral-600">No results for &ldquo;{query}&rdquo;</p>
+                  <Hash className="h-8 w-8 text-base-300" strokeWidth={1.2} />
+                  <p className="text-sm text-accent/60 font-black">No results for &ldquo;{query}&rdquo;</p>
                 </li>
               )}
 
               {/* Pages group */}
               {pages.length > 0 && (
                 <>
-                  <li className="px-4 pb-1 pt-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600">
+                   <li className="px-4 pb-1 pt-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-accent/60">
                       Pages
                     </span>
                   </li>
@@ -195,25 +195,25 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
                         <button
                           onMouseEnter={() => setSelectedIndex(idx)}
                           onClick={() => handleSelect(item)}
-                          className={`flex w-full items-center gap-3 rounded-xl mx-1.5 px-3 py-2.5 text-left transition-all duration-100 ${
+                           className={`flex w-full items-center gap-3 rounded-xl mx-1.5 px-3 py-2.5 text-left transition-all duration-100 ${
                             isSelected
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : "text-neutral-400 hover:bg-white/5"
+                              ? "bg-primary/5 text-primary"
+                              : "text-accent/60 hover:bg-base-200"
                           }`}
                           style={{ width: "calc(100% - 12px)" }}
                         >
                           <div
-                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${
+                             className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${
                               isSelected
-                                ? "border-emerald-500/30 bg-emerald-500/15"
-                                : "border-white/10 bg-white/5"
+                                ? "border-primary/20 bg-primary/10"
+                                : "border-base-300 bg-base-200"
                             }`}
                           >
                             <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />
                           </div>
-                          <span className="text-[13px] font-medium">{item.label}</span>
+                          <span className="text-[13px] font-black">{item.label}</span>
                           {isSelected && (
-                            <kbd className="ml-auto text-[10px] text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5 font-mono">
+                            <kbd className="ml-auto text-[10px] text-primary bg-primary/10 border border-primary/20 rounded px-1.5 py-0.5 font-mono">
                               ↵
                             </kbd>
                           )}
@@ -227,8 +227,8 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
               {/* Transactions group */}
               {transactions.length > 0 && (
                 <>
-                  <li className="px-4 pb-1 pt-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600">
+                   <li className="px-4 pb-1 pt-3">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-accent/60">
                       Transactions
                     </span>
                   </li>
@@ -241,38 +241,38 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
                         <button
                           onMouseEnter={() => setSelectedIndex(idx)}
                           onClick={() => handleSelect(item)}
-                          className={`flex w-full items-center gap-3 rounded-xl mx-1.5 px-3 py-2.5 text-left transition-all duration-100 ${
+                           className={`flex w-full items-center gap-3 rounded-xl mx-1.5 px-3 py-2.5 text-left transition-all duration-100 ${
                             isSelected
-                              ? "bg-white/5 text-white"
-                              : "text-neutral-400 hover:bg-white/5"
+                              ? "bg-base-200 text-neutral"
+                              : "text-accent/60 hover:bg-base-200"
                           }`}
                           style={{ width: "calc(100% - 12px)" }}
                         >
                           <div
                             className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${
                               isIncome
-                                ? "border-emerald-500/30 bg-emerald-500/10"
-                                : "border-red-500/30 bg-red-500/10"
+                                ? "border-green-100 bg-green-50"
+                                : "border-rose-100 bg-rose-50"
                             }`}
                           >
                             {isIncome ? (
-                              <TrendingUp className="h-3.5 w-3.5 text-emerald-400" strokeWidth={1.5} />
+                              <TrendingUp className="h-3.5 w-3.5 text-green-600" strokeWidth={1.5} />
                             ) : (
-                              <TrendingDown className="h-3.5 w-3.5 text-red-400" strokeWidth={1.5} />
+                              <TrendingDown className="h-3.5 w-3.5 text-rose-600" strokeWidth={1.5} />
                             )}
                           </div>
-                          <div className="flex min-w-0 flex-1 flex-col">
-                            <span className="truncate text-[13px] font-medium text-white">
+                           <div className="flex min-w-0 flex-1 flex-col">
+                            <span className="truncate text-[13px] font-black text-neutral">
                               {item.label}
                             </span>
                             {item.sublabel && (
-                              <span className="text-[11px] text-neutral-600">{item.sublabel}</span>
+                              <span className="text-[11px] text-accent/60 font-black">{item.sublabel}</span>
                             )}
                           </div>
                           {item.amount !== undefined && (
-                            <span
-                              className={`shrink-0 text-[12px] font-semibold tabular-nums ${
-                                isIncome ? "text-emerald-400" : "text-red-400"
+                             <span
+                              className={`shrink-0 text-[12px] font-black tabular-nums ${
+                                isIncome ? "text-green-600" : "text-rose-600"
                               }`}
                             >
                               {formatAmount(item.amount, item.txType)}
@@ -287,15 +287,15 @@ export default function CommandSearch({ isOpen, onClose, role }: CommandSearchPr
             </ul>
 
             {/* Footer hint */}
-            <div className="flex items-center gap-4 border-t border-white/[0.06] px-4 py-2.5">
-              <div className="flex items-center gap-1.5 text-[11px] text-neutral-700">
+             <div className="flex items-center gap-4 border-t border-base-200 px-4 py-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] text-accent/60 font-black">
                 <Command className="h-3 w-3" />
                 <span>K to open</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-neutral-700">
+              <div className="flex items-center gap-1.5 text-[11px] text-accent/60 font-black">
                 <span>↑↓ navigate</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-neutral-700">
+              <div className="flex items-center gap-1.5 text-[11px] text-accent/60 font-black">
                 <span>↵ select</span>
               </div>
             </div>

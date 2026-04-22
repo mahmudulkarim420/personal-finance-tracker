@@ -29,16 +29,16 @@ function AdminStatCard({
   accent: "emerald" | "purple" | "blue" | "amber";
 }) {
   const colors = {
-    emerald: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
-    purple: "border-purple-500/20 bg-purple-500/10 text-purple-400",
-    blue: "border-blue-500/20 bg-blue-500/10 text-blue-400",
-    amber: "border-amber-500/20 bg-amber-500/10 text-amber-400",
+    emerald: "border-primary/20 bg-primary/5 text-primary",
+    purple: "border-primary/20 bg-primary/5 text-primary",
+    blue: "border-primary/20 bg-primary/5 text-primary",
+    amber: "border-primary/20 bg-primary/5 text-primary",
   };
 
   return (
-    <article className="flex flex-col gap-4 rounded-[24px] border border-white/10 bg-[#0D0D0D]/85 p-5 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
+    <article className="flex flex-col gap-4 rounded-[24px] border border-base-300 bg-base-200 p-5 shadow-sm">
       <div className="flex items-start justify-between">
-        <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-neutral-600">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-accent/60">
           {label}
         </p>
         <div
@@ -48,8 +48,8 @@ function AdminStatCard({
         </div>
       </div>
       <div>
-        <p className="text-3xl font-bold tracking-tight text-white">{value}</p>
-        <p className="mt-1 text-[12px] text-neutral-600">{sub}</p>
+        <p className="text-3xl font-black tracking-tight text-neutral">{value}</p>
+        <p className="mt-1 text-[11px] text-accent/60 font-black uppercase tracking-widest">{sub}</p>
       </div>
     </article>
   );
@@ -75,14 +75,14 @@ export default async function AdminDashboardPage() {
     <div className="space-y-6">
       {/* Page title */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-purple-500/25 bg-purple-500/10">
-          <Shield className="h-5 w-5 text-purple-400" strokeWidth={1.5} />
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 shadow-sm">
+          <Shield className="h-5 w-5 text-primary" strokeWidth={1.5} />
         </div>
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-white">
+          <h1 className="text-xl font-black tracking-tight text-neutral">
             Command Centre
           </h1>
-          <p className="text-[12px] text-neutral-600">
+          <p className="text-[12px] text-accent font-black opacity-60">
             Platform-level aggregates only — no user data is surfaced here
           </p>
         </div>
@@ -127,10 +127,10 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Privacy notice */}
-      <div className="flex items-start gap-3 rounded-[18px] border border-amber-500/15 bg-amber-500/[0.06] px-5 py-4">
-        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/70" strokeWidth={1.5} />
-        <p className="text-[12px] leading-relaxed text-amber-500/70">
-          <strong className="font-semibold text-amber-500/90">Privacy boundary enforced.</strong>{" "}
+      <div className="flex items-start gap-3 rounded-[18px] border border-base-300 bg-base-200 px-5 py-4 shadow-sm">
+        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={1.5} />
+        <p className="text-[12px] leading-relaxed text-neutral font-black">
+          <strong className="font-black text-neutral uppercase tracking-wider text-[10px] mr-1.5">Privacy boundary enforced.</strong>{" "}
           This panel shows only platform-level aggregates. Individual transaction descriptions,
           budget names, and goal details are never exposed to admin users.
         </p>

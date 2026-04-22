@@ -29,6 +29,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     select: { role: true },
   });
 
+  const sidebarLeft = "lg:left-[300px]";
+
   console.log(`[AdminLayout] clerkId=${userId} | DB role="${dbUser?.role ?? "(none)"}"`);
 
   // If no db user found or role is not admin, redirect to dashboard
@@ -38,25 +40,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <MobileMenuProvider>
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.12),transparent_24%),linear-gradient(180deg,#08090C_0%,#0D0D0F_50%,#08090C_100%)] text-white">
-        <div className="mx-auto flex min-h-screen w-full flex-col gap-4 lg:flex-row">
-          {/* Unified Sidebar */}
-          <Sidebar />
+      <main className="relative min-h-screen bg-base-100 text-neutral overflow-x-hidden font-sans">
+        {/* Unified Sidebar */}
+        <Sidebar />
 
-          <div className="flex min-w-0 flex-1 flex-col overflow-hidden lg:pl-[280px]">
-            {/* Unified Header */}
-            <Header />
+        <div className="flex flex-col min-h-screen transition-all duration-500 ease-in-out lg:pl-[300px]">
+          {/* Unified Header */}
+          <Header />
 
-            {/* Main Content Area - Matching dashboard layout */}
-            <section className="flex-1 overflow-y-auto px-4 pb-8 pt-24 sm:px-6 lg:px-8 lg:pt-36">
-              <div className="mx-auto w-full max-w-7xl">
-                {/* Glassmorphism Card Container */}
-                <div className="rounded-3xl border border-white/10 bg-white/3 p-4 shadow-2xl backdrop-blur-xl sm:p-6 lg:p-8">
-                  {children}
-                </div>
-              </div>
-            </section>
-          </div>
+          {/* Main Content Area - Matching dashboard layout */}
+          <section id="main-content" className="flex-1 px-4 pb-8 pt-24 md:px-6 lg:px-8 lg:pt-36">
+            <div className="mx-auto w-full max-w-[1600px]">{children}</div>
+          </section>
         </div>
       </main>
     </MobileMenuProvider>

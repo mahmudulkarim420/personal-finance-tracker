@@ -12,12 +12,12 @@ export default async function AdminUsersPage() {
       {/* Page title */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-purple-500/25 bg-purple-500/10">
-            <Users className="h-5 w-5 text-purple-400" strokeWidth={1.5} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 shadow-sm">
+            <Users className="h-5 w-5 text-primary" strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">User Management</h1>
-            <p className="text-[12px] text-neutral-600">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">User Management</h1>
+            <p className="text-[12px] text-slate-500 font-medium">
               Manage roles and accounts · {users.length} registered user{users.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -25,10 +25,10 @@ export default async function AdminUsersPage() {
       </div>
 
       {/* Privacy notice */}
-      <div className="flex items-start gap-3 rounded-[18px] border border-amber-500/15 bg-amber-500/[0.06] px-5 py-3.5">
-        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/70" strokeWidth={1.5} />
-        <p className="text-[12px] leading-relaxed text-amber-500/70">
-          <strong className="font-semibold text-amber-500/90">Privacy boundary enforced.</strong>{" "}
+      <div className="flex items-start gap-3 rounded-[18px] border border-amber-100 bg-amber-50 px-5 py-3.5 shadow-sm">
+        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" strokeWidth={1.5} />
+        <p className="text-[12px] leading-relaxed text-amber-700 font-medium">
+          <strong className="font-bold text-amber-800 uppercase tracking-wider text-[10px] mr-1.5">Privacy boundary enforced.</strong>{" "}
           Only email, role, join date, and transaction count are shown.
           Descriptions, amounts, budgets, and goals are never surfaced here.
         </p>

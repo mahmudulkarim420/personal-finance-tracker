@@ -25,7 +25,7 @@ export function StatsCard({
   icon,
   meta,
   chartData,
-  chartColor = "#10b981",
+  chartColor = "#b34800",
   className,
 }: StatsCardProps) {
   return (
@@ -34,19 +34,19 @@ export function StatsCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
       className={clsx(
-        "flex min-h-[210px] min-w-0 flex-col rounded-[28px] border border-white/10 bg-[#121212]/85 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl",
+        "flex min-h-[210px] min-w-0 flex-col rounded-[28px] border border-base-300 bg-base-200 p-5 shadow-sm",
         className
       )}
     >
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-neutral-500">
+          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-accent/60">
             {title}
           </p>
-          <p className="mt-3 text-3xl font-bold leading-none tracking-tight text-white">{amount}</p>
+          <p className="mt-3 text-3xl font-black leading-none tracking-tight text-neutral">{amount}</p>
         </div>
         {icon ? (
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/8 bg-[#1A1A1A] text-neutral-400">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-base-300 bg-base-100 text-accent/60">
             {icon}
           </div>
         ) : null}
@@ -56,10 +56,10 @@ export function StatsCard({
         {trend ? (
           <span
             className={clsx(
-              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium",
-              trendTone === "positive" && "bg-emerald-500/10 text-emerald-400",
-              trendTone === "negative" && "bg-rose-500/10 text-rose-400",
-              trendTone === "neutral" && "bg-white/5 text-neutral-300"
+              "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-black",
+              trendTone === "positive" && "bg-green-100 text-green-800",
+              trendTone === "negative" && "bg-rose-100 text-rose-800",
+              trendTone === "neutral" && "bg-base-300 text-accent"
             )}
           >
             {trend}
@@ -67,7 +67,7 @@ export function StatsCard({
         ) : (
           <span />
         )}
-        {meta ? <div className="text-right text-[11px] text-neutral-500">{meta}</div> : null}
+        {meta ? <div className="text-right text-[11px] text-accent font-black">{meta}</div> : null}
       </div>
 
       {chartData ? (

@@ -118,25 +118,25 @@ export default function LedgerTransactions({
     <div className="w-full relative min-h-[60vh]">
       <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-3 text-[10px] md:text-xs uppercase tracking-[0.4em] text-emerald-500/60 font-bold">
+          <p className="mb-3 text-[10px] md:text-xs uppercase tracking-[0.4em] text-primary font-black">
             Chronology
           </p>
-          <h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold tracking-tight text-white mb-3">
+          <h1 className="text-2xl md:text-4xl 2xl:text-5xl font-black tracking-tight text-neutral mb-3">
             Wealth Ledger
           </h1>
-          <p className="max-w-2xl text-sm md:text-base leading-relaxed text-neutral-500 font-medium">
+          <p className="max-w-2xl text-sm md:text-base leading-relaxed text-accent font-black">
             A comprehensive, high-fidelity mapping of all capital flows across your private
             ecosystem.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-6">
-          <button className="flex items-center justify-center gap-2 text-sm font-bold text-neutral-500 transition-all duration-300 hover:text-white group">
+          <button className="flex items-center justify-center gap-2 text-sm font-black text-accent/60 transition-all duration-300 hover:text-neutral group">
             <Download className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform" />
             <span className="tracking-wide">Export Manifest</span>
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-black transition-all duration-300 hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_24px_rgba(16,185,129,0.2)]"
+            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-black text-white transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
           >
             <Plus className="h-4 w-4" strokeWidth={3} />
             <span className="tracking-tight">Manual Entry</span>
@@ -150,20 +150,20 @@ export default function LedgerTransactions({
           <div className="relative">
             <button
               onClick={() => toggleDropdown("category")}
-              className={`flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm transition-colors ${
+              className={`flex items-center gap-2 rounded-xl border border-base-300 px-4 py-2 text-sm font-black transition-colors ${
                 activeDropdown === "category"
-                  ? "bg-white/10 text-white"
-                  : "bg-white/5 text-neutral-300 hover:bg-white/10"
+                  ? "bg-primary text-white"
+                  : "bg-base-200 text-accent hover:bg-base-300"
               }`}
             >
-              <Tags className="h-4 w-4 text-neutral-400" /> {selectedCategory}
+              <Tags className="h-4 w-4" /> {selectedCategory}
               <ChevronDown
-                className={`ml-1 h-3 w-3 text-neutral-500 transition-transform ${activeDropdown === "category" ? "rotate-180" : ""}`}
+                className={`ml-1 h-3 w-3 transition-transform ${activeDropdown === "category" ? "rotate-180" : ""}`}
               />
             </button>
             {activeDropdown === "category" && (
-              <div className="absolute left-0 top-full z-10 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#121212] shadow-xl shadow-black/50">
-                <div className="bg-black/20 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+              <div className="absolute left-0 top-full z-10 mt-2 w-56 overflow-hidden rounded-xl border border-base-300 bg-base-100 shadow-xl">
+                <div className="bg-base-200 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-accent/60">
                   Filter by category
                 </div>
                 <div className="max-h-64 overflow-y-auto">
@@ -172,7 +172,7 @@ export default function LedgerTransactions({
                       setSelectedCategory("Categories");
                       setActiveDropdown(null);
                     }}
-                    className="w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/5 text-neutral-300 hover:text-white"
+                    className="w-full px-4 py-2.5 text-left text-sm font-black transition-colors hover:bg-base-200 text-accent hover:text-primary"
                   >
                     All Categories
                   </button>
@@ -183,7 +183,7 @@ export default function LedgerTransactions({
                         setSelectedCategory(cat);
                         setActiveDropdown(null);
                       }}
-                      className="w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/5 text-neutral-300 hover:text-white"
+                      className="w-full px-4 py-2.5 text-left text-sm font-black transition-colors hover:bg-base-200 text-accent hover:text-primary"
                     >
                       {cat}
                     </button>
@@ -196,13 +196,13 @@ export default function LedgerTransactions({
 
         {/* Search Input */}
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-accent/60" />
           <input
             type="text"
             placeholder="Search records..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-11 pr-4 text-sm text-white outline-none transition-all focus:border-emerald-500/50 focus:bg-white/10"
+            className="w-full rounded-2xl border border-base-300 bg-base-200 py-4 pl-10 pr-4 outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary font-black tabular-nums shadow-sm"
           />
         </div>
       </div>
@@ -215,7 +215,7 @@ export default function LedgerTransactions({
             {[1, 2, 3].map((skeleton) => (
               <div
                 key={skeleton}
-                className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 animate-pulse"
+                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-base-200 p-4 animate-pulse"
               >
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-xl bg-white/10" />
@@ -225,17 +225,18 @@ export default function LedgerTransactions({
                   </div>
                 </div>
                 <div className="h-4 w-20 rounded bg-white/10" />
+                <div className="h-4 w-20 rounded bg-base-300" />
               </div>
             ))}
           </div>
         ) : filteredGroupedTransactions.length === 0 ? (
           // Empty State
-          <div className="flex flex-col items-center justify-center py-20 text-center border border-white/5 rounded-3xl bg-white/5">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-neutral-400 mb-4">
+           <div className="flex flex-col items-center justify-center py-20 text-center border border-base-300 rounded-3xl bg-base-200">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-base-200 text-accent/30 mb-4 shadow-sm">
               <Receipt className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No Matching Records</h3>
-            <p className="text-neutral-400 max-w-sm mb-6 text-sm">
+            <h3 className="text-xl font-black text-neutral mb-2">No Matching Records</h3>
+            <p className="text-accent max-w-sm mb-6 text-sm font-black opacity-60">
               Your search parameters returned zero results. Try adjusting your filters.
             </p>
           </div>
@@ -243,7 +244,7 @@ export default function LedgerTransactions({
           // Mapped Data Display
           filteredGroupedTransactions.map((group) => (
             <div key={group.label}>
-              <h2 className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-500">
+              <h2 className="mb-4 text-[11px] font-black uppercase tracking-[0.2em] text-accent/60">
                 {group.label}
               </h2>
               <div className="flex flex-col gap-3">
@@ -251,13 +252,13 @@ export default function LedgerTransactions({
                   const isIncome = tx.type === "INCOME";
 
                   return (
-                    <div
+                     <div
                       key={tx.id}
-                      className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                      className="flex items-center justify-between rounded-2xl border border-base-300 bg-base-200 p-4 transition-colors hover:bg-base-300"
                     >
                       <div className="flex items-center gap-4">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ${isIncome ? "text-emerald-400" : "text-neutral-300"}`}
+                         <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-base-200 shadow-sm ${isIncome ? "text-green-700" : "text-accent/60"}`}
                         >
                           {isIncome ? (
                             <TrendingUp className="h-5 w-5" strokeWidth={1.5} />
@@ -266,23 +267,23 @@ export default function LedgerTransactions({
                           )}
                         </div>
                         <div>
-                          <h3 className="mb-0.5 text-sm font-medium text-white">
+                          <h3 className="mb-0.5 text-sm font-black text-neutral">
                             {tx.description}
                           </h3>
-                          <p className="text-xs text-neutral-500">
+                          <p className="text-xs text-accent font-black opacity-60">
                             {tx.category} • {tx.account || "Cash"}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-6">
-                        <span className="flex items-center gap-1.5 rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[10px] font-bold tracking-wider text-neutral-400">
+                         <span className="flex items-center gap-1.5 rounded-md border border-base-300 bg-base-200 px-2 py-1 text-[10px] font-black tracking-wider text-accent/60 shadow-sm">
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${tx.status === "PENDING" ? "bg-amber-400" : "bg-emerald-500"}`}
+                            className={`h-1.5 w-1.5 rounded-full ${tx.status === "PENDING" ? "bg-orange-400" : "bg-green-500"}`}
                           ></span>
                           {tx.status}
                         </span>
-                        <span
-                          className={`w-24 text-right text-sm font-medium ${isIncome ? "text-emerald-400" : "text-white"}`}
+                         <span
+                          className={`w-24 text-right text-sm font-black ${isIncome ? "text-green-600" : "text-neutral"}`}
                         >
                           {isIncome ? "+" : "-"}${Math.abs(tx.amount).toFixed(2)}
                         </span>
@@ -292,7 +293,7 @@ export default function LedgerTransactions({
                             setDeleteAlert({ isOpen: true, id: tx.id });
                           }}
                           disabled={isDeleting === tx.id}
-                          className="rounded-lg p-2 text-neutral-500 transition-all hover:bg-rose-500/10 hover:text-rose-500 disabled:opacity-50"
+                          className="rounded-lg p-2 text-accent/60 transition-all hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
                         >
                           <Trash2
                             className={`h-4 w-4 ${isDeleting === tx.id ? "animate-pulse" : ""}`}

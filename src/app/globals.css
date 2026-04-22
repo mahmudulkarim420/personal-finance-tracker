@@ -1,17 +1,40 @@
 @import "tailwindcss";
-
-:root {
-  --background: #0b0d12;
-  --foreground: #e8ecf3;
+@plugin "daisyui" {
+  themes: caramellatte;
 }
+@config "../../tailwind.config.ts";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Caramellatte Palette Tokens for Tailwind Utilities */
+  --color-primary: #b34800;
+  --color-secondary: #f4e0c8;
+  --color-accent: #6b3c1a;
+  --color-neutral: #2b1a11;
+  --color-base-100: #fff1e2;
+  --color-base-200: #f8e3cd;
+  --color-base-300: #edd3b7;
 }
 
+/* ─── Caramellatte Theme Definition for daisyUI ─────────────────────────────────── */
+[data-theme="caramellatte"] {
+  --primary: #b34800;
+  --primary-content: #ffffff;
+  --secondary: #f4e0c8;
+  --secondary-content: #2b1a11;
+  --accent: #6b3c1a;
+  --accent-content: #ffffff;
+  --neutral: #2b1a11;
+  --neutral-content: #ffffff;
+  --base-100: #fff1e2;
+  --base-200: #f8e3cd;
+  --base-300: #edd3b7;
+  --base-content: #2b1a11;
+}
+
+/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
@@ -22,13 +45,15 @@ body {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
+  @apply bg-base-100 text-accent font-sans;
   margin: 0;
 }
 
-/* Custom slim scrollbar for dropdowns */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-neutral font-bold;
+}
+
+/* ─── Silk Scrollbar ─────────────────────────────────────────────────────────── */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -36,13 +61,13 @@ body {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: #edd3b7;
   border-radius: 99px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: #d4b494;
 }
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.08) transparent;
+  scrollbar-color: #edd3b7 transparent;
 }

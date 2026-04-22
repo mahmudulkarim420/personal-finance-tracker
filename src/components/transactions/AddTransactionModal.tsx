@@ -58,40 +58,40 @@ export default function AddTransactionModal({ isOpen, onClose, budgetCategories 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80 px-0 sm:px-4 backdrop-blur-md transition-opacity">
-      <div className="w-full max-w-lg h-[90vh] sm:h-auto overflow-y-auto rounded-t-[32px] sm:rounded-[32px] border border-white/10 bg-[#08090A]/95 p-6 shadow-2xl sm:p-10 ring-1 ring-white/5">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-neutral/40 px-0 sm:px-4 backdrop-blur-sm transition-opacity">
+      <div className="w-full max-w-lg h-[90vh] sm:h-auto overflow-y-auto rounded-t-[32px] sm:rounded-[32px] border border-base-300 bg-base-100 p-6 shadow-2xl sm:p-10">
         
         {/* Mobile Handle */}
-        <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-white/10 sm:hidden" />
+        <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-base-300 sm:hidden" />
 
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Manual Injection</h2>
-            <p className="text-xs text-neutral-500 font-medium mt-1 uppercase tracking-widest">Transaction Manifest</p>
+            <h2 className="text-2xl font-black text-neutral tracking-tight">Manual Injection</h2>
+            <p className="text-xs text-accent font-black mt-1 uppercase tracking-widest opacity-60">Transaction Manifest</p>
           </div>
           <button 
             onClick={onClose} 
-            className="rounded-xl p-2.5 text-neutral-500 transition-all duration-300 hover:bg-white/10 hover:text-white"
+            className="rounded-xl p-2.5 text-accent/60 transition-all duration-300 hover:bg-base-200 hover:text-neutral"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="mb-6 rounded-2xl bg-rose-500/10 p-4 text-sm text-rose-400 border border-rose-500/20 font-medium">
+          <div className="mb-6 rounded-2xl bg-rose-100/50 p-4 text-sm text-rose-700 border border-rose-200 font-black">
             {errorMsg}
           </div>
         )}
 
         {/* Type Toggle */}
-        <div className="mb-8 flex p-1.5 bg-white/5 rounded-2xl border border-white/5">
+        <div className="mb-8 flex p-1.5 bg-base-200 rounded-2xl border border-slate-200">
           <button
             type="button"
             onClick={() => reset({ ...watch(), type: "EXPENSE" })}
             className={clsx(
-              "flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300",
-              typeValue === "EXPENSE" ? "bg-rose-500 text-black shadow-lg shadow-rose-500/20" : "text-neutral-500 hover:text-white"
+              "flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300",
+              typeValue === "EXPENSE" ? "bg-rose-600 text-white shadow-sm" : "text-accent/60 hover:text-neutral"
             )}
           >
             Expense
@@ -100,8 +100,8 @@ export default function AddTransactionModal({ isOpen, onClose, budgetCategories 
             type="button"
             onClick={() => reset({ ...watch(), type: "INCOME" })}
             className={clsx(
-              "flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300",
-              typeValue === "INCOME" ? "bg-emerald-500 text-black shadow-lg shadow-emerald-500/20" : "text-neutral-500 hover:text-white"
+              "flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300",
+              typeValue === "INCOME" ? "bg-green-600 text-white shadow-sm" : "text-accent/60 hover:text-neutral"
             )}
           >
             Income
@@ -112,83 +112,83 @@ export default function AddTransactionModal({ isOpen, onClose, budgetCategories 
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 ml-1">Capital Amount</label>
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/60 ml-1">Capital Amount</label>
               <div className="relative group">
                 <span className={clsx(
-                  "absolute left-4 top-1/2 -translate-y-1/2 font-bold transition-colors duration-300",
-                  amountValue > 0 ? "text-emerald-500" : amountValue < 0 ? "text-rose-400" : "text-neutral-500"
+                  "absolute left-4 top-1/2 -translate-y-1/2 font-black transition-colors duration-300",
+                  amountValue > 0 ? "text-green-700" : amountValue < 0 ? "text-rose-700" : "text-accent/40"
                 )}>$</span>
                 <input 
                   type="number"
                   step="0.01"
                   {...register("amount", { valueAsNumber: true })}
                   className={clsx(
-                    "w-full rounded-2xl border border-white/5 bg-white/[0.03] py-4 pl-10 pr-4 outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 font-semibold tabular-nums shadow-inner",
-                    amountValue > 0 ? "text-emerald-400" : amountValue < 0 ? "text-rose-400" : "text-white"
+                    "w-full rounded-2xl border border-base-300 bg-base-200 py-4 pl-10 pr-4 outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary font-black tabular-nums shadow-sm",
+                    amountValue > 0 ? "text-green-700" : amountValue < 0 ? "text-rose-700" : "text-neutral"
                   )}
                   placeholder="0.00"
                 />
               </div>
-              {errors.amount && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.amount.message}</p>}
+              {errors.amount && <p className="text-[10px] text-rose-600 font-bold ml-1">{errors.amount.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 ml-1">Value Date</label>
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/60 ml-1">Value Date</label>
               <div className="relative">
                 <input 
                   type="date"
                   {...register("date")}
-                  className="w-full rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-white font-semibold outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 shadow-inner [color-scheme:dark]"
+                  className="w-full rounded-2xl border border-base-300 bg-base-200 px-5 py-4 text-neutral font-black outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm"
                 />
               </div>
-              {errors.date && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.date.message}</p>}
+              {errors.date && <p className="text-[10px] text-rose-600 font-bold ml-1">{errors.date.message}</p>}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 ml-1">Flow Description</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/60 ml-1">Flow Description</label>
             <input 
               type="text"
               {...register("description")}
-              className="w-full rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-white font-semibold placeholder-neutral-700 outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 shadow-inner"
+              className="w-full rounded-2xl border border-base-300 bg-base-200 px-5 py-4 text-neutral font-black placeholder-accent/40 outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm"
               placeholder="Source or destination details..."
             />
-            {errors.description && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.description.message}</p>}
+            {errors.description && <p className="text-[10px] text-rose-700 font-black ml-1">{errors.description.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 ml-1">Asset Category</label>
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/60 ml-1">Asset Category</label>
               <select 
                 {...register("category")}
-                className="w-full appearance-none rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-sm font-semibold text-white outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 shadow-inner"
+                className="w-full appearance-none rounded-2xl border border-base-300 bg-base-200 px-5 py-4 text-sm font-black text-neutral outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm"
               >
                 {budgetCategories.length > 0 ? (
-                  budgetCategories.map(cat => <option key={cat} value={cat} className="bg-[#08090A]">{cat}</option>)
+                  budgetCategories.map(cat => <option key={cat} value={cat} className="bg-base-200">{cat}</option>)
                 ) : (
-                  <option value="General" className="bg-[#08090A]">General (Add a budget first)</option>
+                  <option value="General" className="bg-base-200">General (Add a budget first)</option>
                 )}
               </select>
-              {errors.category && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.category.message}</p>}
+              {errors.category && <p className="text-[10px] text-rose-600 font-bold ml-1">{errors.category.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 ml-1">Operating Account</label>
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-accent/60 ml-1">Operating Account</label>
               <select 
                 {...register("account")}
-                className="w-full appearance-none rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-sm font-semibold text-white outline-none transition-all duration-300 focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 shadow-inner"
+                className="w-full appearance-none rounded-2xl border border-base-300 bg-base-200 px-5 py-4 text-sm font-black text-neutral outline-none transition-all duration-300 focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm"
               >
-                {ACCOUNTS.map(acc => <option key={acc} value={acc} className="bg-[#08090A]">{acc}</option>)}
+                {ACCOUNTS.map(acc => <option key={acc} value={acc} className="bg-base-200">{acc}</option>)}
               </select>
-              {errors.account && <p className="text-[10px] text-rose-400 font-bold ml-1">{errors.account.message}</p>}
+              {errors.account && <p className="text-[10px] text-rose-600 font-bold ml-1">{errors.account.message}</p>}
             </div>
           </div>
 
           <div className="pt-4">
-            <button 
+             <button 
               type="submit" 
               disabled={isPending}
-              className="group relative w-full overflow-hidden rounded-2xl bg-emerald-500 py-4.5 text-sm font-black text-black transition-all duration-300 hover:bg-emerald-400 disabled:opacity-50 active:scale-[0.98] shadow-[0_12px_32px_rgba(16,185,129,0.3)]"
+              className="group relative w-full overflow-hidden rounded-2xl bg-primary py-4.5 text-sm font-black text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50 active:scale-[0.98] shadow-sm"
             >
               {isPending ? (
                 <div className="flex items-center justify-center gap-2">

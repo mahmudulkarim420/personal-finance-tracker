@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <MobileMenuProvider>
-      <main className="relative min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.08),_transparent_24%),linear-gradient(180deg,_#08090A_0%,_#0B0C0E_50%,_#08090A_100%)] text-white overflow-x-hidden">
+      <main className="relative min-h-screen bg-base-100 text-neutral overflow-x-hidden">
         {/* Persistent Sidebar (Desktop) / Drawer (Mobile) */}
         <Sidebar aria-label="Main Navigation" />
 

@@ -27,22 +27,22 @@ import {
 function typeIcon(type: string) {
   switch (type) {
     case "SUCCESS":
-      return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" strokeWidth={1.5} />;
+      return <CheckCircle2 className="h-3.5 w-3.5 text-green-600" strokeWidth={1.5} />;
     case "WARNING":
-      return <AlertTriangle className="h-3.5 w-3.5 text-yellow-400" strokeWidth={1.5} />;
+      return <AlertTriangle className="h-3.5 w-3.5 text-orange-600" strokeWidth={1.5} />;
     default:
-      return <Info className="h-3.5 w-3.5 text-blue-400" strokeWidth={1.5} />;
+      return <Info className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />;
   }
 }
 
 function typeBadge(type: string) {
   switch (type) {
     case "SUCCESS":
-      return "border-emerald-500/25 bg-emerald-500/10";
+      return "border-green-100 bg-green-50";
     case "WARNING":
-      return "border-yellow-500/25 bg-yellow-500/10";
+      return "border-orange-100 bg-orange-50";
     default:
-      return "border-blue-500/25 bg-blue-500/10";
+      return "border-slate-100 bg-slate-50";
   }
 }
 
@@ -170,15 +170,15 @@ export default function NotificationDropdown({
             right: coords.right,
             zIndex: 9999,
           }}
-          className="w-[360px] overflow-hidden rounded-[18px] border border-white/10 bg-[#0D0D0D]/95 shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-2xl"
+          className="w-[360px] overflow-hidden rounded-[18px] border border-base-300 bg-base-100 shadow-2xl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-neutral-400" strokeWidth={1.5} />
-              <span className="text-[13px] font-semibold text-white">Notifications</span>
+              <Bell className="h-4 w-4 text-accent/60" strokeWidth={1.5} />
+              <span className="text-[13px] font-black text-neutral">Notifications</span>
               {unreadCount > 0 && (
-                <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-emerald-500/20 px-1.5 text-[10px] font-bold text-emerald-400 ring-1 ring-emerald-500/30">
+                <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary/10 px-1.5 text-[10px] font-bold text-primary ring-1 ring-primary/20">
                   {unreadCount}
                 </span>
               )}
@@ -186,7 +186,7 @@ export default function NotificationDropdown({
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAll}
-                className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-neutral-500 transition-colors hover:bg-white/5 hover:text-neutral-300"
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-black text-accent/60 transition-colors hover:bg-base-200 hover:text-primary"
               >
                 <CheckCheck className="h-3 w-3" strokeWidth={1.5} />
                 Mark all read
@@ -201,12 +201,12 @@ export default function NotificationDropdown({
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="flex animate-pulse items-start gap-3 rounded-xl bg-white/[0.02] p-3"
+                    className="flex animate-pulse items-start gap-3 rounded-xl bg-slate-50 p-3"
                   >
-                    <div className="h-7 w-7 shrink-0 rounded-lg bg-white/5" />
+                    <div className="h-7 w-7 shrink-0 rounded-lg bg-slate-200" />
                     <div className="flex-1 space-y-1.5">
-                      <div className="h-3 w-3/4 rounded-full bg-white/5" />
-                      <div className="h-2 w-1/3 rounded-full bg-white/5" />
+                      <div className="h-3 w-3/4 rounded-full bg-slate-200" />
+                      <div className="h-2 w-1/3 rounded-full bg-slate-200" />
                     </div>
                   </div>
                 ))}
@@ -215,10 +215,10 @@ export default function NotificationDropdown({
 
             {hasFetched && notifications.length === 0 && (
               <li className="flex flex-col items-center justify-center gap-3 py-12">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                  <BellOff className="h-5 w-5 text-neutral-700" strokeWidth={1.2} />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50">
+                  <BellOff className="h-5 w-5 text-accent/40" strokeWidth={1.2} />
                 </div>
-                <p className="text-[13px] text-neutral-600">No new alerts</p>
+                <p className="text-[13px] text-accent/60 font-black">No new alerts</p>
               </li>
             )}
 
@@ -226,8 +226,8 @@ export default function NotificationDropdown({
               <li key={n.id}>
                 <button
                   onClick={() => !n.isRead && handleMarkOne(n.id)}
-                  className={`group flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-150 hover:bg-white/[0.04] ${
-                    !n.isRead ? "bg-white/[0.025]" : ""
+                  className={`group flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-150 hover:bg-slate-50 ${
+                    !n.isRead ? "bg-slate-50/50" : ""
                   }`}
                 >
                   {/* Icon badge */}
@@ -240,20 +240,20 @@ export default function NotificationDropdown({
                   {/* Content */}
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span
-                      className={`text-[13px] leading-snug ${
-                        n.isRead ? "text-neutral-500" : "text-white"
+                      className={`text-[13px] leading-snug font-medium ${
+                        n.isRead ? "text-accent/60" : "text-neutral"
                       }`}
                     >
                       {n.message}
                     </span>
-                    <span className="text-[11px] text-neutral-700">
+                    <span className="text-[11px] text-accent/40 font-black">
                       {timeAgo(n.createdAt)}
                     </span>
                   </div>
 
                   {/* Unread dot */}
                   {!n.isRead && (
-                    <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500 ring-2 ring-[#0D0D0D]" />
+                    <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary ring-2 ring-white" />
                   )}
                 </button>
               </li>
@@ -262,8 +262,8 @@ export default function NotificationDropdown({
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="border-t border-white/[0.06] px-4 py-2.5 text-center">
-              <p className="text-[11px] text-neutral-700">
+            <div className="border-t border-slate-100 px-4 py-2.5 text-center">
+              <p className="text-[11px] text-accent/60 font-black">
                 {notifications.length} notification
                 {notifications.length !== 1 ? "s" : ""}
               </p>

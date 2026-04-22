@@ -58,12 +58,12 @@ function SidebarContent({
       {/* Brand */}
       <div className="mb-10 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/15 shadow-[0_0_24px_rgba(16,185,129,0.15)]">
-            <Gem className="h-5 w-5 text-emerald-400" strokeWidth={1.5} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-base-300 bg-base-200 shadow-sm">
+            <Gem className="h-5 w-5 text-primary" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-[15px] font-bold tracking-tight text-white">Obsidian Lens</p>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-500 font-medium">
+            <p className="text-[15px] font-bold tracking-tight text-neutral">Obsidian Lens</p>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-accent font-black">
               Private Wealth
             </p>
           </div>
@@ -71,7 +71,7 @@ function SidebarContent({
 
         <button
           onClick={onClose}
-          className="lg:hidden p-2 text-neutral-500 hover:text-white transition-colors"
+          className="lg:hidden p-2 text-accent/60 hover:text-neutral transition-colors"
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
@@ -79,7 +79,7 @@ function SidebarContent({
       </div>
 
       <nav className="flex flex-1 flex-col gap-2">
-        <p className="px-4 text-[10px] font-extrabold uppercase tracking-[0.2em] text-neutral-700 mb-2">
+        <p className="px-4 text-[10px] font-extrabold uppercase tracking-[0.2em] text-accent mb-2">
           {sectionLabel}
         </p>
         <div className="space-y-1">
@@ -90,21 +90,16 @@ function SidebarContent({
                 key={item.label}
                 href={item.href}
                 className={clsx(
-                  "group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-medium transition-all duration-300",
+                  "group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300",
                   isActive
-                    ? isAdmin
-                      ? "text-purple-400"
-                      : "text-emerald-400"
-                    : "text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300",
+                    ? "text-primary"
+                    : "text-accent/80 hover:bg-primary/5 hover:text-neutral",
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="active-pill"
-                    className={clsx(
-                      "absolute inset-0 rounded-2xl border border-white/5",
-                      isAdmin ? "bg-purple-500/10" : "bg-emerald-500/10",
-                    )}
+                    className="absolute inset-0 rounded-2xl border border-primary/20 bg-primary/10"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -112,10 +107,8 @@ function SidebarContent({
                   className={clsx(
                     "relative z-10 h-4.5 w-4.5 transition-colors duration-300",
                     isActive
-                      ? isAdmin
-                        ? "text-purple-400"
-                        : "text-emerald-400"
-                      : "text-neutral-600 group-hover:text-neutral-400",
+                      ? "text-primary"
+                      : "text-accent/60 group-hover:text-neutral",
                   )}
                   strokeWidth={1.5}
                 />
@@ -123,12 +116,7 @@ function SidebarContent({
                 {isActive && (
                   <motion.div
                     layoutId="active-indicator"
-                    className={clsx(
-                      "h-1 w-1 rounded-full relative z-10",
-                      isAdmin
-                        ? "bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]"
-                        : "bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]",
-                    )}
+                    className="h-1 w-1 rounded-full relative z-10 bg-primary shadow-[0_0_8px_rgba(179,72,0,0.4)]"
                   />
                 )}
               </Link>
@@ -137,11 +125,11 @@ function SidebarContent({
         </div>
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-white/5 shrink-0">
+      <div className="mt-auto pt-6 border-t border-base-300 shrink-0">
         <SignOutButton redirectUrl="/">
-          <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-medium text-neutral-500 transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-400 group">
+          <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-bold text-accent/80 transition-all duration-300 hover:bg-rose-50 hover:text-rose-600 group">
             <LogOut
-              className="h-4.5 w-4.5 text-neutral-600 group-hover:text-rose-400 transition-colors"
+              className="h-4.5 w-4.5 text-accent/60 group-hover:text-rose-600 transition-colors"
               strokeWidth={1.5}
             />
             <span className="flex-1 text-left">Sign Out</span>
@@ -185,7 +173,7 @@ export function Sidebar({ className }: { className?: string }) {
       {/* Desktop Persistent Sidebar */}
       <aside
         className={clsx(
-          "hidden lg:flex fixed left-0 top-0 bottom-0 w-[280px] flex-col border-r border-white/5 bg-[#08090A] z-40",
+          "hidden lg:flex fixed left-0 top-0 bottom-0 w-[300px] flex-col border-r border-base-300 bg-base-100 z-40",
           className,
         )}
       >
@@ -216,7 +204,7 @@ export function Sidebar({ className }: { className?: string }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-              className="absolute left-0 top-0 bottom-0 w-[300px] max-w-[85%] bg-[#08090A] border-r border-white/10 shadow-2xl flex flex-col"
+              className="absolute left-0 top-0 bottom-0 w-[300px] max-w-[85%] bg-base-100 border-r border-base-300 shadow-2xl flex flex-col"
             >
               <SidebarContent
                 pathname={pathname}
