@@ -3,8 +3,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
-export type TransactionRecord = Awaited<ReturnType<typeof db.transaction.findFirst>> &
-  NonNullable<unknown>;
+export type TransactionRecord = Awaited<ReturnType<typeof db.transaction.findFirst>> & {
+  [key: string]: any;
+};
 
 export async function getTransactions(): Promise<{
   success: boolean;
