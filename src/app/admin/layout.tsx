@@ -6,10 +6,17 @@ import { db } from "@/lib/db";
 import { MobileMenuProvider } from "@/context/MobileMenuContext";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { userId } = await auth();
+  const { userId, sessionClaims } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Handle session sync delay - sessionClaims may be null briefly after sign-in
+  if (!sessionClaims) {
+    // Session is still syncing, render nothing or a loading state
+    // The middleware will handle the redirect if needed on next request
+    return null;
   }
 
   // Source of Truth: Check database role
@@ -18,6 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     select: { role: true },
   });
 
+  // If no db user found or role is not admin, redirect to dashboard
   if (!dbUser || dbUser.role !== "admin") {
     redirect("/dashboard");
   }

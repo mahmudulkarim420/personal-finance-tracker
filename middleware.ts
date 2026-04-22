@@ -26,7 +26,12 @@ export default clerkMiddleware(async (auth, request) => {
   await auth.protect();
 
   const { sessionClaims } = await auth();
-  const role = sessionClaims?.metadata?.role as UserRole | undefined;
+  // Handle session sync delay - sessionClaims may be null briefly
+  if (!sessionClaims) {
+    return NextResponse.next();
+  }
+  const publicMetadata = (sessionClaims as { publicMetadata?: { role?: UserRole } }).publicMetadata;
+  const role = publicMetadata?.role || "user";
   const pathname = request.nextUrl.pathname;
 
   if (pathname === "/") {

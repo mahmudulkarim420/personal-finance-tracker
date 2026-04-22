@@ -1,7 +1,7 @@
 export type UserRole = "user" | "admin";
 
 export interface CustomJwtPayload {
-  metadata: {
+  publicMetadata: {
     role?: UserRole;
   };
 }
